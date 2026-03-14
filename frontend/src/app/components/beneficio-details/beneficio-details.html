@@ -1,0 +1,69 @@
+<h2 mat-dialog-title>
+  {{ openType === "edit" ? "Alterar Benefício" : "Criar Benefício" }}
+</h2>
+<mat-dialog-content>
+  <form [formGroup]="formBeneficio">
+    <mat-form-field class="full-width">
+      <mat-label>Nome</mat-label>
+      <input
+        matInput
+        placeholder="Nome do benefício"
+        formControlName="nome"
+        required
+      />
+      @if (formBeneficio.get("nome")?.hasError("required")) {
+        <mat-error>Nome é obrigatório</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Descrição</mat-label>
+      <textarea
+        matInput
+        placeholder="Descrição do benefício"
+        formControlName="descricao"
+        rows="2"
+        required
+      ></textarea>
+      @if (formBeneficio.get("descricao")?.hasError("required")) {
+        <mat-error>Descrição é obrigatória</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="full-width" floatLabel="always">
+      <mat-label>Saldo</mat-label>
+      <span matTextPrefix>R$&nbsp;</span>
+      <input
+        matInput
+        type="number"
+        class="input-currency"
+        formControlName="valor"
+        placeholder="0.00"
+        required
+        step="0.01"
+        min="0.01"
+      />
+      @if (formBeneficio.get("valor")?.hasError("required")) {
+        <mat-error>Valor é obrigatório</mat-error>
+      }
+      @if (formBeneficio.get("valor")?.hasError("min")) {
+        <mat-error>Valor deve ser maior que zero</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="full-width" align="end">
+      <mat-slide-toggle formControlName="ativo">Ativo</mat-slide-toggle>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button matButton (click)="onCancel()">Cancelar</button>
+  <button
+    matButton="filled"
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="!formBeneficio.valid"
+  >
+    Salvar
+  </button>
+</mat-dialog-actions>
