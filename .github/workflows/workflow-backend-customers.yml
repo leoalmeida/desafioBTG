@@ -1,4 +1,4 @@
-name: CI Pipeline for ms-customers Module
+name: CI Pipeline for ms-customer Module
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   code-quality-customers:
-    name: Lint do módulo ms-customers
+    name: Lint do módulo ms-customer
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,29 +21,29 @@ jobs:
           cache: 'maven'
       
       - name: Run spotless check
-        run: mvn -B -f ms-customers/pom.xml spotless:check
+        run: mvn -B -f ms-customer/pom.xml spotless:check
 
       - name: Run Checkstyle
-        run: mvn -B -f ms-customers/pom.xml checkstyle:check
+        run: mvn -B -f ms-customer/pom.xml checkstyle:check
 
       - name: Generate Checkstyle report
-        run: mvn -B -f ms-customers/pom.xml checkstyle:checkstyle
+        run: mvn -B -f ms-customer/pom.xml checkstyle:checkstyle
 
       - name: Run PMD check
-        run: mvn -B -f ms-customers/pom.xml pmd:check
+        run: mvn -B -f ms-customer/pom.xml pmd:check
 
       - name: generate PMD report
-        run: mvn -B -f ms-customers/pom.xml pmd:pmd
+        run: mvn -B -f ms-customer/pom.xml pmd:pmd
       
       - name: Run spotbugs check
-        run: mvn -B -f ms-customers/pom.xml spotbugs:check
+        run: mvn -B -f ms-customer/pom.xml spotbugs:check
 
       - name: Generate SpotBugs report
-        run: mvn -B -f ms-customers/pom.xml spotbugs:spotbugs
+        run: mvn -B -f ms-customer/pom.xml spotbugs:spotbugs
   
   test-customers:
     needs: [code-quality-customers]
-    name: Execute Unit tests for Customers Module
+    name: Execute tests for Customer Module
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -56,15 +56,20 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
   
-      - name: Roda os testes do módulo ms-customers
-        run: mvn -B -f ms-customers/pom.xml clean package
-      - name: Run Code Quality Analysis do módulo ms-customers
-        run: mvn -B -f ms-customers/pom.xml jacoco:report
-      - name: Upload Coverage Report do módulo ms-customers
+      - name: Roda os testes do módulo ms-customer
+        run: mvn -B -f ms-customer/pom.xml clean package
+
+      - name: Run E2E tests do módulo ms-customer
+        run: mvn -B -f ms-customer/pom.xml -Ddocker.e2e=true -Dtest=CustomerFlowE2ETest test
+
+      - name: Run Code Quality Analysis do módulo ms-customer
+        run: mvn -B -f ms-customer/pom.xml jacoco:report
+
+      - name: Upload Coverage Report do módulo ms-customer
         uses: actions/upload-artifact@v6
         with:
           name: coverage-report
-          path: ms-customers/target/site/jacoco/
+          path: ms-customer/target/site/jacoco/
           retention-days: 1
 
   build-customers:
@@ -78,14 +83,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
-      - name: Build ms-customers module
-        run: mvn -B -f ms-customers/pom.xml clean package -DskipTests
+      - name: Build ms-customer module
+        run: mvn -B -f ms-customer/pom.xml clean package -DskipTests
       
       - name: Upload Backend Artifact
         uses: actions/upload-artifact@v6
         with:
-          name: ms-customers-jar
-          path: ms-customers/target/*.jar
+          name: ms-customer-jar
+          path: ms-customer/target/*.jar
           retention-days: 1
 
   #zap-scan:

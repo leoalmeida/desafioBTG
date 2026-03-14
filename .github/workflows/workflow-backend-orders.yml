@@ -89,7 +89,7 @@ jobs:
       - name: Upload Backend Artifact
         uses: actions/upload-artifact@v6
         with:
-          name: ms-orders-jar
+          name: ms-order-jar
           path: ms-order/target/*.jar
           retention-days: 1
 
