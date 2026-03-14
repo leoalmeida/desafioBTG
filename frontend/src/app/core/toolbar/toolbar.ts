@@ -8,13 +8,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { UserType } from 'src/app/users/user-type';
 import { TitleService } from 'src/app/services/title.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { OrderItemDetails } from '../../orders/order-item-details/order-item-details';
 import { CustomerDetails } from '../../customers/customer-details/customer-details';
 import { NotificationService } from 'src/app/services/notification.service';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
 import { OrderService } from 'src/app/orders/order.service';
 import { CustomerService } from 'src/app/customers/customer.service';
 import { LoadingService } from '../loading-indicator/loading.service';
+import { FormsModule } from '@angular/forms';
 
 interface RouteInfo {
   path: string;
@@ -24,6 +25,7 @@ interface RouteInfo {
   selector: 'app-toolbar',
   standalone: true,
   imports: [
+    FormsModule,
     MatButtonModule,
     MatDialogModule,
     MatSidenavModule,
@@ -31,6 +33,7 @@ interface RouteInfo {
     MatIconModule,
     RouterLink,
     MatSnackBarModule,
+    MatSelectModule
   ],
   templateUrl: './toolbar.html',
   styleUrls: ['./toolbar.css'],
@@ -52,10 +55,21 @@ export class Toolbar implements AfterViewInit {
   private loadingService: LoadingService = inject(LoadingService);
   
   customers = this.customerService.items();
-  selectedCustomerId = signal<number>(-1);
+  selectedCustomerId: number = -1;
   constructor() {
     this.tokenStorageService.autenticado$.subscribe((isAuth) => {
       this.isLoggedIn.set(isAuth);
+      if (isAuth) {        
+        try {
+          this.loadingService.loadingOn();
+          this.customerService.getAll();
+          this.orderService.getAll();
+        } catch (error: any) {
+          this.notify.showError(error.message || 'Erro ao identificar usuário.');
+        } finally {
+          this.loadingService.loadingOff();
+        }
+      }
     });
     this.tokenStorageService.loggedUser$.subscribe((user) => {
       this.loggedUser.set(user);
@@ -63,15 +77,6 @@ export class Toolbar implements AfterViewInit {
     this.titleService.title$.subscribe((title) => {
       this.title.set(title);
     });
-    try {
-      this.loadingService.loadingOn();
-      this.customerService.getAll();
-      this.orderService.getAll();
-    } catch (error: any) {
-      this.notify.showError(error.message || 'Erro ao identificar usuário.');
-    } finally {
-      this.loadingService.loadingOff();
-    }
   }
 
   ngAfterViewInit(): void {
@@ -96,13 +101,13 @@ export class Toolbar implements AfterViewInit {
   showMenu() { }
 
   onCustomerSelected(customerId: number): void {
-    this.selectedCustomerId.set(customerId);
+    this.selectedCustomerId = customerId;
     this.orderService.filterByCustomer(customerId);
   }
 
   onCreateOrder(): void {
-    if (this.selectedCustomerId() >= 0) {
-      const order = this.orderService.addOne(this.selectedCustomerId());
+    if (this.selectedCustomerId >= 0) {
+      const order = this.orderService.addOne(this.selectedCustomerId);
     }
   }
 

@@ -22,14 +22,14 @@
         (selectionChange)="onCustomerSelected($event.value)"
       >
         <mat-option [value]="-1">Todos os clientes</mat-option>
-        @for (customer of customers(); track $index) {
+        @for (customer of customers; track $index) {
           <mat-option [value]="customer.id">{{ customer.name }}</mat-option>
         }
       </mat-select>
       <ul class="nav-links">
         <a matButton="tonal" class="link-item" 
           (click)="onCreateOrder()"
-          [disabled]="selectedCustomerId() < 0">
+          [disabled]="selectedCustomerId < 0">
           <mat-icon>add_shopping_cart</mat-icon>
           Novo Pedido
         </a>

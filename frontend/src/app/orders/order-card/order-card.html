@@ -13,9 +13,9 @@
     {{ order().id ? 'Pedido #' + order().id : 'Novo Pedido' }}
   </mat-card-title>
   <mat-card-content class="description">
-    @for(let item of order().itemList)
+    @for(item of order().itemList; track item.id) {
       <ul (click)="onUpdateOrderItem(item)">{{ item.productName }} - {{ item.quantity }} x {{ item.price | currency: "BRL" : "symbol" : "1.2-2" }}</ul>
-    @endfor
+    }
   </mat-card-content>
   <mat-card-subtitle class="category">
     Total:
@@ -28,7 +28,7 @@
     <button mat-icon-button (click)="onRemoveOrder(confirmDialog)">
       <mat-icon>delete</mat-icon>
     </button>
-    <button mat-icon-button (click)="onAddOrderItem(order())">
+    <button mat-icon-button (click)="onAddOrderItem()">
       <mat-icon>add</mat-icon>
     </button>
     <button mat-icon-button (click)="onSaveOrder(confirmDialog)">

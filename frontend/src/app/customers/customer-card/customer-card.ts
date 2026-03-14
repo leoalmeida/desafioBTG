@@ -17,7 +17,6 @@ import { OrderService } from 'src/app/orders/order.service';
 @Component({
   selector: 'app-customer-card',
   imports: [
-    CurrencyPipe,
     MatCardModule,
     MatDividerModule,
     MatDialogModule,

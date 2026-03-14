@@ -23,8 +23,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatInputModule,
     MatButtonModule,
     MatDialogModule,
-    MatSlideToggleModule,
-    MatCheckboxModule,
   ],
   templateUrl: './order-item-details.html',
   styleUrls: ['./order-item-details.css'],

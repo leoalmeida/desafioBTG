@@ -8,22 +8,40 @@ import { TokenStorageService } from '../services/token-storage.service';
 const users: UserType[] = [
   {
     id: 1,
+    email: 'jrrtolk@teste.com',
+    nome: 'J.R.R. Tolkien',
+    telefone: '99999',
     username: 'jrrtolk',
-    nome: 'Jorge',
-    email: 'jorge@test.com',
-    telefone: '11999990000',
-    stats: [],
-    logs: [],
+    accessToken:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic3ViIjoiMzIzMjEyMTIxIiwidXNlcm5hbWUiOiJqcnJ0b2xrIiwiaWF0IjoxNTE2MjM5MDIyLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sInBlcm1pc3Npb25zIjpbIlJFQUQiLCJXUklURSJdLCJleHAiOjF9.8sJuOv7jrls5DJOIR2ReuKoBHpl8ffvD1gTYbJEv30Q',
+    stats: [
+      { title: 'Benefícios Ativos', value: 5 },
+      { title: 'Benefícios Cancelados', value: 2 },
+      { title: 'Benefícios Pendentes', value: 1 },
+    ],
+    logs: [
+      'Usuário jrrtolk fez login.',
+      "Usuário jrrtolk visualizou o benefício 'Plano de Saúde'.",
+    ],
   },
   {
-    id: 2,
+    id: 5,
+    email: 'teste1@teste.com',
+    nome: 'Teste Gibson',
+    telefone: '333333',
     username: 'teste',
-    nome: 'Maria',
-    email: 'maria@test.com',
-    telefone: '11888887777',
-    stats: [],
-    logs: [],
-  },
+    accessToken:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IldpbGxpYW0gR2lic29uIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwiaWQiOjQsInVzZXJuYW1lIjoid2lsbGlhbkB0ZXN0ZS5jb20iLCJyb2xlcyI6WyJVU0VSIl0sInBlcm1pc3Npb25zIjpbIkZVTEwiXX0.5tPzsrO8KeIljFC64tItjIa1EasQlb5lwtmAnu4esCc',
+    stats: [
+      { title: 'Benefícios Ativos', value: 2 },
+      { title: 'Benefícios Cancelados', value: 3 },
+      { title: 'Benefícios Pendentes', value: 0 },
+    ],
+    logs: [
+      'Usuário william fez login.',
+      "Usuário william visualizou o benefício 'Plano de Saúde'.",
+    ],
+  }
 ];
 
 

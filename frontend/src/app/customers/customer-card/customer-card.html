@@ -2,7 +2,7 @@
   [class]="{ created: customer().ativo, closed: !customer().ativo }"
   class="card-button"
   appearance="outlined"
-  (click)="onUpdateCustomer(customer())"
+  (click)="onUpdateCustomer()"
 >
   <mat-card-title class="title">
     <div
@@ -26,10 +26,9 @@
   >
   <mat-divider></mat-divider>
   <mat-card-actions class="actionbar" align="end">
-    <mat-slide-toggle
-      [(ngModel)]="customer().ativo"
-      (click)="onAlterarStatus($event, confirmDialog)"
-    ></mat-slide-toggle>
+    <button mat-icon-button (click)="onRemoveCustomer($event, confirmDialog)">
+      <mat-icon>delete</mat-icon>
+    </button>
   </mat-card-actions>
 </mat-card>
 
