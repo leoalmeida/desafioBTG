@@ -1,0 +1,104 @@
+name: CI Pipeline for ms-customers Module
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  code-quality-customers:
+    name: Lint do módulo ms-customers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: Run spotless check
+        run: mvn -B -f ms-customers/pom.xml spotless:check
+
+      - name: Run Checkstyle
+        run: mvn -B -f ms-customers/pom.xml checkstyle:check
+
+      - name: Generate Checkstyle report
+        run: mvn -B -f ms-customers/pom.xml checkstyle:checkstyle
+
+      - name: Run PMD check
+        run: mvn -B -f ms-customers/pom.xml pmd:check
+
+      - name: generate PMD report
+        run: mvn -B -f ms-customers/pom.xml pmd:pmd
+      
+      - name: Run spotbugs check
+        run: mvn -B -f ms-customers/pom.xml spotbugs:check
+
+      - name: Generate SpotBugs report
+        run: mvn -B -f ms-customers/pom.xml spotbugs:spotbugs
+  
+  test-customers:
+    needs: [code-quality-customers]
+    name: Execute Unit tests for Customers Module
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+  
+      - name: Roda os testes do módulo ms-customers
+        run: mvn -B -f ms-customers/pom.xml clean package
+      - name: Run Code Quality Analysis do módulo ms-customers
+        run: mvn -B -f ms-customers/pom.xml jacoco:report
+      - name: Upload Coverage Report do módulo ms-customers
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-report
+          path: ms-customers/target/site/jacoco/
+          retention-days: 1
+
+  build-customers:
+    needs: [test-customers]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Build ms-customers module
+        run: mvn -B -f ms-customers/pom.xml clean package -DskipTests
+      
+      - name: Upload Backend Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ms-customers-jar
+          path: ms-customers/target/*.jar
+          retention-days: 1
+
+  #zap-scan:
+  #  needs: build-project
+  #  uses: ./.github/workflows/zapscan.yml
+  #  secrets: inherit
+  
+  #docker:
+  #  needs: zap-scan
+  #  uses: ./.github/workflows/docker.yml
+  #  secrets: inherit
+  
+  #deploy_google:
+  #  needs: docker
+  #  uses: ./.github/workflows/release-gcloud.yml
+  #  secrets: inherit

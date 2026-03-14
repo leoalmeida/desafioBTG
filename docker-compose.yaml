@@ -1,0 +1,105 @@
+services:
+
+  ms-customer:
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    build: ./ms-customer
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - ${SPRING_CUSTOMER_LOCAL_PORT}:${SPRING_CUSTOMER_DOCKER_PORT}
+    environment: 
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url":"jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+        "spring.datasource.username":"${MYSQL_USER}",
+        "spring.datasource.password":"${MYSQL_PASSWORD}",
+        "spring.jpa.hibernate.ddl-auto":"update",
+        "spring.jpa.properties.hibernate.dialect":"org.hibernate.dialect.MySQLDialect"
+        }'
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true    
+    networks:
+      - app-network
+
+  ms-order:
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    build: ./ms-order
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - ${SPRING_ORDER_LOCAL_PORT}:${SPRING_ORDER_DOCKER_PORT}
+    environment: 
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url":"jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+        "spring.datasource.username":"${MYSQL_USER}",
+        "spring.datasource.password":"${MYSQL_PASSWORD}",
+        "spring.jpa.hibernate.ddl-auto":"update",
+        "spring.jpa.properties.hibernate.dialect":"org.hibernate.dialect.MySQLDialect"
+        }'
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true    
+    networks:
+      - app-network
+      
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: leoalmeida/frontend:latest
+    container_name: frontend
+    ports:
+      - ${FRONTEND_LOCAL_PORT}:${FRONTEND_DOCKER_PORT}
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - app-network
+  
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_LOCAL_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
+

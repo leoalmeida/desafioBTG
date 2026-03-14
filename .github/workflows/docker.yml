@@ -1,0 +1,45 @@
+name: Docker Hub Image
+
+on:
+  workflow_call:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set Docker Build
+      uses: docker/setup-buildx-action@v3.12.0
+    - name: Docker login
+      uses: docker/login-action@v4.0.0
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWD }}
+    - name: Docker push backend
+      uses: docker/build-push-action@v6.19.2
+      with:
+        file: ./ms-orders/Dockerfile
+        context: ./ms-orders
+        push: true
+        tags: leoalmeida/ms-orders:${{github.run_number}}
+    - name: Docker push ms-customers
+      uses: docker/build-push-action@v6.19.2
+      with:
+        file: ./ms-customers/Dockerfile
+        context: ./ms-customers
+        push: true
+        tags: leoalmeida/ms-customers:${{github.run_number}}
+    - name: Docker push api-gateway
+      uses: docker/build-push-action@v6.19.2
+      with:
+        file: ./api-gateway/Dockerfile
+        context: ./api-gateway
+        push: true
+        tags: leoalmeida/api-gateway:${{github.run_number}} 
+    - name: Docker push service-discovery
+      uses: docker/build-push-action@v6.19.2
+      with:
+        file: ./service-discovery/Dockerfile
+        context: ./service-discovery
+        push: true
+        tags: leoalmeida/service-discovery:${{github.run_number}}

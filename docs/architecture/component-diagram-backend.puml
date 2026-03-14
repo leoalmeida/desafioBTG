@@ -1,0 +1,24 @@
+@startuml C4_Component
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Backend Service - Component Diagram
+
+Container(service, "Backend Service", "Spring Boot")
+
+Component(controller, "REST Controller", "Spring Web", "Handles HTTP requests")
+Component(service_layer, "Service Layer", "Spring Service", "Business rules")
+Component(repository, "Repository", "Spring Data MongoDB", "Data access layer")
+Component(messaging, "Event Publisher/Consumer", "Spring AMQP", "RabbitMQ integration")
+
+ComponentDb(mongodb, "MongoDB")
+ComponentQueue(rabbitmq, "RabbitMQ")
+
+Rel(controller, service_layer, "Calls")
+Rel(service_layer, repository, "Reads/Writes")
+Rel(repository, mongodb, "Stores data")
+
+Rel(service_layer, messaging, "Publishes events")
+Rel(messaging, rabbitmq, "Publishes/Consumes")
+
+@enduml

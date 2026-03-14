@@ -1,0 +1,38 @@
+@startuml C4_Container
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Container Diagram
+
+Person(user, "User")
+
+System_Boundary(system, "Full Stack Application") {
+
+    Container(frontend, "Frontend", "SPA", "User interface")
+
+    Container(api_gateway, "API Gateway", "Spring Cloud Gateway", "Entry point for backend services")
+
+    Container(service_a, "Service A", "Spring Boot", "Business logic service")
+
+    Container(service_b, "Service B", "Spring Boot", "Business logic service")
+
+    ContainerDb(mongodb, "MongoDB", "NoSQL Database")
+
+    ContainerQueue(rabbitmq, "RabbitMQ", "AMQP Message Broker")
+
+}
+
+Rel(user, frontend, "Uses", "HTTPS")
+
+Rel(frontend, api_gateway, "Calls API", "REST")
+
+Rel(api_gateway, service_a, "Routes requests", "REST")
+Rel(api_gateway, service_b, "Routes requests", "REST")
+
+Rel(service_a, mongodb, "Reads/Writes")
+Rel(service_b, mongodb, "Reads/Writes")
+
+Rel(service_a, rabbitmq, "Publishes events")
+Rel(service_b, rabbitmq, "Consumes events")
+
+@enduml

@@ -1,0 +1,6 @@
+[submodule "api-gateway"]
+	path = api-gateway
+	url = https://github.com/leoalmeida/api-gateway
+[submodule "service-discovery"]
+	path = service-discovery
+	url = https://github.com/leoalmeida/service-discovery

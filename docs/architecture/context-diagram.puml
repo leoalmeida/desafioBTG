@@ -1,0 +1,19 @@
+@startuml C4_Context
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title System Context Diagram
+
+Person(user, "User", "User of the application")
+
+System(system, "Full Stack Application", "Application for managing business operations")
+
+System_Ext(mongodb, "MongoDB", "Primary database")
+System_Ext(rabbitmq, "RabbitMQ", "Messaging broker")
+
+Rel(user, system, "Uses", "HTTPS")
+
+Rel(system, mongodb, "Stores data")
+Rel(system, rabbitmq, "Publishes/Consumes events")
+
+@enduml
