@@ -75,7 +75,7 @@ describe('LoginPage', () => {
   it('deve redirecionar no ngOnInit se já estiver autenticado', () => {
     tokenStorageSpy.isAuthenticated.mockReturnValue(true);
     component.ngOnInit();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['beneficios']);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['customers']);
   });
 
   it('deve atualizar isLoggedIn no reloadPage quando não autenticado', () => {

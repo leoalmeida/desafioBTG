@@ -8,6 +8,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:ci": "ng test --watch=false --coverage",
+    "test:services:ci": "ng test --watch=false --include=src/app/**/*.service.spec.ts",
+    "test:components:ci": "ng test --watch=false --include=src/app/**/*.spec.ts --exclude=src/app/**/*.service.spec.ts",
+    "test:ci:threshold": "npm run test:ci && node ./scripts/check-coverage-thresholds.mjs",
     "lint": "ng lint",
     "prettier": "npx prettier . --write"
   },

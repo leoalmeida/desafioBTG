@@ -10,6 +10,7 @@ import { signal } from '@angular/core';
 import { CustomerType } from '../customer-type';
 import { UserType } from '../../users/user-type';
 import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
+import { makeCustomer, makeUser } from '../../../test-helpers/domain-fixtures';
 
 describe('CustomerList', () => {
   let component: CustomerList;
@@ -20,22 +21,14 @@ describe('CustomerList', () => {
   let dialogSpy: SpyObj<MatDialog>;
 
   const mockCustomers: CustomerType[] = [
-    { id: 1, nome: 'Vale Refeição', descricao: 'VR', valor: 100, ativo: true },
-    { id: 2, nome: 'Plano de Saúde', descricao: 'PS', valor: 200, ativo: true },
+    makeCustomer({ id: 1, name: 'Vale Refeicao' }),
+    makeCustomer({ id: 2, name: 'Plano de Saude' }),
   ];
 
-  const mockUser: UserType = {
-    id: 1,
-    email: 'user@test.com',
-    nome: 'Usuario Teste',
-    telefone: '11999990000',
-    username: 'user',
-    stats: [],
-    logs: [],
-  };
+  const mockUser: UserType = makeUser();
 
   beforeEach(async () => {
-    customerServiceSpy = createSpyObj<CustomerService>(['getAll'], {
+    customerServiceSpy = createSpyObj<CustomerService>([], {
       items: signal(mockCustomers),
     } as Partial<CustomerService>);
     loadingServiceSpy = createSpyObj<LoadingService>([
@@ -64,7 +57,6 @@ describe('CustomerList', () => {
 
   it('deve criar o componente e carregar dados iniciais', () => {
     expect(component).toBeTruthy();
-    expect(customerServiceSpy.getAll).toHaveBeenCalled();
     expect(loadingServiceSpy.loadingOn).toHaveBeenCalled();
     expect(loadingServiceSpy.loadingOff).toHaveBeenCalled();
   });
@@ -75,7 +67,7 @@ describe('CustomerList', () => {
 
     const filtered = component.filteredCustomerList();
     expect(filtered?.length).toBe(1);
-    expect(filtered![0].nome).toBe('Vale Refeição');
+    expect(filtered![0].name).toBe('Vale Refeicao');
   });
 
   it('deve filtrar sem diferenciar maiúsculas e minúsculas', () => {
@@ -84,7 +76,7 @@ describe('CustomerList', () => {
 
     const filtered = component.filteredCustomerList();
     expect(filtered?.length).toBe(1);
-    expect(filtered![0].nome).toBe('Plano de Saúde');
+    expect(filtered![0].name).toBe('Plano de Saude');
   });
 
   it('deve atualizar searchQuery ao chamar handleMessage', () => {

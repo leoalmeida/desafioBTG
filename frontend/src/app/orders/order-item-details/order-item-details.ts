@@ -23,6 +23,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatInputModule,
     MatButtonModule,
     MatDialogModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './order-item-details.html',
   styleUrls: ['./order-item-details.css'],
@@ -38,7 +39,8 @@ export class OrderItemDetails {
     id: [-1],
     productName: ['', Validators.required],
     quantity: [0, [Validators.required, Validators.min(1)]],
-    price: [0.0, [Validators.required, Validators.min(0.01)]]
+    price: [0.0, [Validators.required, Validators.min(0.01)]],
+    ativo: [true],
   });
 
   constructor() {

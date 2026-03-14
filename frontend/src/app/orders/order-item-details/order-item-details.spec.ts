@@ -1,46 +1,40 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BeneficioDetails } from './order-item-details';
+import { OrderItemDetails } from './order-item-details';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { BeneficioType } from '../../models/beneficio-type';
-import { BeneficioService } from 'src/app/services/beneficio.service';
-import { of } from 'rxjs';
+import { OrderService } from '../order.service';
+import { OrderItemType } from '../order-type';
 import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
+import { makeOrderItem } from '../../../test-helpers/domain-fixtures';
 
-describe('BeneficioDetails', () => {
-  let component: BeneficioDetails;
-  let fixture: ComponentFixture<BeneficioDetails>;
-  let dialogRefSpy: SpyObj<MatDialogRef<BeneficioDetails>, 'close'>;
-  let beneficioServiceSpy: SpyObj<BeneficioService, 'createOne' | 'changeOne'>;
+describe('OrderItemDetails', () => {
+  let component: OrderItemDetails;
+  let fixture: ComponentFixture<OrderItemDetails>;
+  let dialogRefSpy: SpyObj<MatDialogRef<OrderItemDetails>, 'close'>;
+  let orderServiceSpy: SpyObj<OrderService>;
 
-  const mockBeneficio: BeneficioType = {
+  const mockOrderItem: OrderItemType = makeOrderItem({
     id: 1,
-    nome: 'Vale Refeição',
-    descricao: 'Benefício de refeição diária',
-    valor: 450.5,
-    ativo: true,
-  };
+    productName: 'Produto Inicial',
+    quantity: 2,
+    price: 15,
+  });
 
   beforeEach(async () => {
-    dialogRefSpy = createSpyObj<MatDialogRef<BeneficioDetails>>(['close']);
-    beneficioServiceSpy = createSpyObj<BeneficioService>([
-      'createOne',
-      'changeOne',
-    ]);
-    beneficioServiceSpy.changeOne.mockReturnValue(of(true));
-    beneficioServiceSpy.createOne.mockReturnValue(of(true));
+    dialogRefSpy = createSpyObj<MatDialogRef<OrderItemDetails>>(['close']);
+    orderServiceSpy = createSpyObj<OrderService>([]);
 
     await TestBed.configureTestingModule({
-      imports: [BeneficioDetails, ReactiveFormsModule, NoopAnimationsModule],
+      imports: [OrderItemDetails, ReactiveFormsModule, NoopAnimationsModule],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefSpy },
-        { provide: MAT_DIALOG_DATA, useValue: mockBeneficio },
-        { provide: BeneficioService, useValue: beneficioServiceSpy },
+        { provide: MAT_DIALOG_DATA, useValue: mockOrderItem },
+        { provide: OrderService, useValue: orderServiceSpy },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BeneficioDetails);
+    fixture = TestBed.createComponent(OrderItemDetails);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -49,39 +43,41 @@ describe('BeneficioDetails', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve inicializar o formulário com os dados recebidos via MAT_DIALOG_DATA', () => {
-    expect(component.formBeneficio.value).toEqual({
-      nome: mockBeneficio.nome,
-      descricao: mockBeneficio.descricao,
-      valor: mockBeneficio.valor,
-      ativo: mockBeneficio.ativo,
+  it('deve inicializar o formulario com os dados recebidos via MAT_DIALOG_DATA', () => {
+    expect(component.formOrderItem.value).toEqual({
+      id: mockOrderItem.id,
+      productName: mockOrderItem.productName,
+      quantity: mockOrderItem.quantity,
+      price: mockOrderItem.price,
+      ativo: true,
     });
   });
 
-  it('deve invalidar o formulário se campos obrigatórios estiverem vazios', () => {
-    component.formBeneficio.controls['nome'].setValue('');
-    component.formBeneficio.controls['valor'].setValue(null);
+  it('deve invalidar o formulario se campos obrigatorios estiverem vazios', () => {
+    component.formOrderItem.controls['productName'].setValue('');
+    component.formOrderItem.controls['quantity'].setValue(0);
+    component.formOrderItem.controls['price'].setValue(0);
 
-    expect(component.formBeneficio.valid).toBe(false);
+    expect(component.formOrderItem.valid).toBe(false);
   });
 
-  it('deve fechar o diálogo com true ao chamar onSubmit se válido', () => {
+  it('deve fechar o dialogo com orderItem ao chamar onSubmit se valido', () => {
     const updatedValue = {
-      nome: 'Novo Nome',
-      descricao: 'Nova Descrição',
-      valor: 600,
-      ativo: false,
+      id: 1,
+      productName: 'Produto Atualizado',
+      quantity: 3,
+      price: 20,
+      ativo: true,
     };
-    component.formBeneficio.patchValue(updatedValue);
+    component.formOrderItem.patchValue(updatedValue);
 
     component.onSubmit();
 
-    expect(beneficioServiceSpy.changeOne).toHaveBeenCalled();
-    expect(dialogRefSpy.close).toHaveBeenCalledWith(true);
+    expect(dialogRefSpy.close).toHaveBeenCalledWith(updatedValue);
   });
 
-  it('não deve fechar o diálogo ao chamar onSubmit se o formulário for inválido', () => {
-    component.formBeneficio.controls['nome'].setValue('');
+  it('nao deve fechar o dialogo ao chamar onSubmit se o formulario for invalido', () => {
+    component.formOrderItem.controls['productName'].setValue('');
     component.onSubmit();
     expect(dialogRefSpy.close).not.toHaveBeenCalled();
   });

@@ -6,27 +6,29 @@ import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { TitleService } from '../../services/title.service';
 import { UserType } from 'src/app/users/user-type';
+import { CustomerService } from 'src/app/customers/customer.service';
+import { OrderService } from 'src/app/orders/order.service';
+import { NotificationService } from 'src/app/services/notification.service';
+import { LoadingService } from '../loading-indicator/loading.service';
 import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
+import { signal } from '@angular/core';
+import { makeUser } from '../../../test-helpers/domain-fixtures';
 
 describe('Toolbar', () => {
   let component: Toolbar;
   let fixture: ComponentFixture<Toolbar>;
   let tokenStorageSpy: SpyObj<TokenStorageService>;
   let titleServiceSpy: SpyObj<TitleService>;
+  let customerServiceSpy: SpyObj<CustomerService>;
+  let orderServiceSpy: SpyObj<OrderService>;
+  let notificationServiceSpy: SpyObj<NotificationService>;
+  let loadingServiceSpy: SpyObj<LoadingService>;
   let loggedUserSubject: BehaviorSubject<UserType>;
   let autenticadoSubject: BehaviorSubject<boolean>;
   let titleSubject: BehaviorSubject<string>;
 
   beforeEach(async () => {
-    loggedUserSubject = new BehaviorSubject<UserType>({
-      id: 1,
-      nome: 'Usuario Teste',
-      email: 'user@test.com',
-      telefone: '11999990000',
-      username: 'user',
-      stats: [],
-      logs: [],
-    });
+    loggedUserSubject = new BehaviorSubject<UserType>(makeUser());
     autenticadoSubject = new BehaviorSubject<boolean>(false);
     titleSubject = new BehaviorSubject<string>('Frontend App');
 
@@ -37,12 +39,28 @@ describe('Toolbar', () => {
     titleServiceSpy = createSpyObj<TitleService>([], {
       title$: titleSubject.asObservable(),
     } as Partial<TitleService>);
+    customerServiceSpy = createSpyObj<CustomerService>(['getAll'], {
+      items: signal([]),
+    } as Partial<CustomerService>);
+    orderServiceSpy = createSpyObj<OrderService>(['getAll', 'filterByCustomer']);
+    notificationServiceSpy = createSpyObj<NotificationService>([
+      'showError',
+      'showSuccess',
+    ]);
+    loadingServiceSpy = createSpyObj<LoadingService>([
+      'loadingOn',
+      'loadingOff',
+    ]);
 
     await TestBed.configureTestingModule({
       imports: [Toolbar],
       providers: [
         { provide: TokenStorageService, useValue: tokenStorageSpy },
         { provide: TitleService, useValue: titleServiceSpy },
+        { provide: CustomerService, useValue: customerServiceSpy },
+        { provide: OrderService, useValue: orderServiceSpy },
+        { provide: NotificationService, useValue: notificationServiceSpy },
+        { provide: LoadingService, useValue: loadingServiceSpy },
         provideRouter([]),
       ],
     }).compileComponents();

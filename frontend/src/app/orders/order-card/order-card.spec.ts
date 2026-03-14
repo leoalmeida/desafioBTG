@@ -2,46 +2,52 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OrderCard } from './order-card';
 import { OrderService } from '../order.service';
 import { NotificationService } from 'src/app/services/notification.service';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TemplateRef } from '@angular/core';
 import { OrderType } from '../order-type';
+import { of } from 'rxjs';
 import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
+import { makeOrder } from '../../../test-helpers/domain-fixtures';
 
 describe('OrderCard', () => {
   let component: OrderCard;
   let fixture: ComponentFixture<OrderCard>;
   let orderServiceSpy: SpyObj<OrderService>;
   let notificationServiceSpy: SpyObj<NotificationService>;
-  let dialogSpy: SpyObj<MatDialog>;
+  let dialogOpenSpy: ReturnType<typeof vi.fn>;
 
   const mockOrder: OrderType = {
-    id: 1,
-    nome: 'Vale Alimentação',
-    descricao: 'Benefício para alimentação',
-    valor: 500,
-    ativo: true,
+    ...makeOrder({ id: 1, customerId: 99, itemList: [] }),
   };
 
   beforeEach(async () => {
-    orderServiceSpy = createSpyObj<OrderService>(['changeStatus']);
+    orderServiceSpy = createSpyObj<OrderService>([
+      'changeOne',
+      'createOne',
+      'removeOne',
+    ]);
+    (orderServiceSpy.changeOne as any).mockReturnValue(of(true));
+    (orderServiceSpy.createOne as any).mockReturnValue(of(true));
     notificationServiceSpy = createSpyObj<NotificationService>([
       'showSuccess',
       'showError',
     ]);
-    dialogSpy = createSpyObj<MatDialog>(['open']);
 
     await TestBed.configureTestingModule({
       imports: [OrderCard, MatDialogModule, NoopAnimationsModule],
       providers: [
         { provide: OrderService, useValue: orderServiceSpy },
         { provide: NotificationService, useValue: notificationServiceSpy },
-        { provide: MatDialog, useValue: dialogSpy },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OrderCard);
     component = fixture.componentInstance;
+    dialogOpenSpy = vi.fn().mockReturnValue({
+      afterClosed: () => of(true),
+    });
+    (component as any).dialogAcao = { open: dialogOpenSpy };
 
     // Set required input
     fixture.componentRef.setInput('order', mockOrder);
@@ -52,23 +58,17 @@ describe('OrderCard', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve mostrar erro quando não houver id do benefício para alterar status', () => {
-    const orderSemId = { ...mockOrder, id: undefined };
-    const mockEvent = {
-      preventDefault: vi.fn(),
-      stopPropagation: vi.fn(),
-    } as unknown as MouseEvent;
+  it('deve salvar pedido existente com changeOne', () => {
+    component.onSaveOrder({} as TemplateRef<any>);
 
-    fixture.componentRef.setInput('order', orderSemId);
-    fixture.detectChanges();
+    expect(dialogOpenSpy).toHaveBeenCalled();
+    expect(orderServiceSpy.changeOne).toHaveBeenCalledWith(mockOrder);
+  });
 
-    component.onAlterarStatus(mockEvent, {} as TemplateRef<any>);
+  it('deve remover pedido quando confirmado', () => {
+    component.onRemoveOrder({} as TemplateRef<any>);
 
-    expect(mockEvent.preventDefault).toHaveBeenCalled();
-    expect(mockEvent.stopPropagation).toHaveBeenCalled();
-    expect(notificationServiceSpy.showError).toHaveBeenCalledWith(
-      'Nenhum benefício selecionado.',
-    );
-    expect(dialogSpy.open).not.toHaveBeenCalled();
+    expect(dialogOpenSpy).toHaveBeenCalled();
+    expect(orderServiceSpy.removeOne).toHaveBeenCalledWith(1);
   });
 });

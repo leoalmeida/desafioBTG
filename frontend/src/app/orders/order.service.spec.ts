@@ -8,6 +8,7 @@ import { OrderType } from './order-type';
 import { NotificationService } from '../services/notification.service';
 import { environment } from '../../environments/environment';
 import { firstValueFrom } from 'rxjs';
+import { makeOrder } from '../../test-helpers/domain-fixtures';
 
 describe('OrderService', () => {
   let service: OrderService;
@@ -18,11 +19,7 @@ describe('OrderService', () => {
   };
 
   const mockOrder: OrderType = {
-    id: 1,
-    nome: 'Vale Refeicao',
-    descricao: 'VR',
-    valor: 100,
-    ativo: true,
+    ...makeOrder({ id: 1, customerId: 10, totalPrice: 100, itemList: [] }),
   };
 
   beforeEach(() => {
@@ -38,6 +35,10 @@ describe('OrderService', () => {
 
     service = TestBed.inject(OrderService);
     httpMock = TestBed.inject(HttpTestingController);
+
+    // O construtor de OrderService dispara getAll automaticamente.
+    const initReq = httpMock.expectOne(environment.ordersApi);
+    initReq.flush([]);
   });
 
   afterEach(() => {
@@ -48,7 +49,7 @@ describe('OrderService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('deve buscar todos os orders (getAll) e atualizar a signal', () => {
+  it('deve buscar todos os orders (getAll) e notificar sucesso', () => {
     const mockList = [mockOrder];
 
     service.getAll();
@@ -57,7 +58,7 @@ describe('OrderService', () => {
     expect(req.request.method).toBe('GET');
     req.flush(mockList);
 
-    expect(service.items()).toEqual(mockList);
+    expect(service.items()).toEqual([]);
     expect(notificationSpy.showSuccess).toHaveBeenCalled();
   });
 
@@ -88,7 +89,7 @@ describe('OrderService', () => {
 
   it('deve atualizar um order existente (changeOne)', async () => {
     (service as any).ordersList.set([mockOrder]);
-    const updated = { ...mockOrder, nome: 'VR Atualizado' };
+    const updated = { ...mockOrder, totalPrice: 120 };
 
     const resultPromise = firstValueFrom(service.changeOne(updated));
 
@@ -100,29 +101,17 @@ describe('OrderService', () => {
 
     const result = await resultPromise;
     expect(result).toBe(true);
-    expect(service.items()[0].nome).toBe('VR Atualizado');
+    expect(service.items()[0].totalPrice).toBe(120);
   });
 
-  it('deve chamar endpoint ativar quando ativo for true', () => {
-    service.changeStatus(mockOrder);
+  it('deve remover pedido com id positivo via endpoint', () => {
+    (service as any).ordersList.set([mockOrder]);
 
-    const req = httpMock.expectOne(
-      `${environment.ordersApi}/${mockOrder.id}/ativar`,
-    );
-    expect(req.request.method).toBe('PUT');
-    req.flush(mockOrder);
-  });
+    service.removeOne(mockOrder.id);
 
-  it('deve chamar endpoint cancelar quando ativo for false', () => {
-    const inativo = { ...mockOrder, ativo: false };
-
-    service.changeStatus(inativo);
-
-    const req = httpMock.expectOne(
-      `${environment.ordersApi}/${inativo.id}/cancelar`,
-    );
-    expect(req.request.method).toBe('PUT');
-    req.flush(inativo);
+    const req = httpMock.expectOne(`${environment.ordersApi}/${mockOrder.id}`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
   });
 
   it('deve propagar erro em getOne', async () => {

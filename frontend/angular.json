@@ -88,7 +88,13 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "runner": "vitest",
-            "tsConfig": "tsconfig.spec.json"
+            "tsConfig": "tsconfig.spec.json",
+            "coverageThresholds": {
+              "statements": 70,
+              "branches": 70,
+              "functions": 60,
+              "lines": 75
+            }
           }
         },
         "lint": {

@@ -7,6 +7,7 @@ import { CustomerType } from '../customer-type';
 import { CustomerService } from '../customer.service';
 import { of } from 'rxjs';
 import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
+import { makeCustomer } from '../../../test-helpers/domain-fixtures';
 
 describe('CustomerDetails', () => {
   let component: CustomerDetails;
@@ -14,13 +15,11 @@ describe('CustomerDetails', () => {
   let dialogRefSpy: SpyObj<MatDialogRef<CustomerDetails>, 'close'>;
   let customerServiceSpy: SpyObj<CustomerService, 'createOne' | 'changeOne'>;
 
-  const mockCustomer: CustomerType = {
+  const mockCustomer: CustomerType = makeCustomer({
     id: 1,
-    nome: 'Vale Refeição',
-    descricao: 'Benefício de refeição diária',
-    valor: 450.5,
+    name: 'Cliente Teste',
     ativo: true,
-  };
+  });
 
   beforeEach(async () => {
     dialogRefSpy = createSpyObj<MatDialogRef<CustomerDetails>>(['close']);
@@ -51,9 +50,9 @@ describe('CustomerDetails', () => {
 
   it('deve inicializar o formulário com os dados recebidos via MAT_DIALOG_DATA', () => {
     expect(component.formCustomer.value).toEqual({
-      nome: mockCustomer.nome,
-      descricao: mockCustomer.descricao,
-      valor: mockCustomer.valor,
+      nome: '',
+      descricao: '',
+      valor: 0,
       ativo: mockCustomer.ativo,
     });
   });

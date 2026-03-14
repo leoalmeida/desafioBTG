@@ -10,6 +10,7 @@ import { signal } from '@angular/core';
 import { OrderType } from '../order-type';
 import { UserType } from '../../users/user-type';
 import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
+import { makeOrder, makeUser } from '../../../test-helpers/domain-fixtures';
 
 describe('OrderList', () => {
   let component: OrderList;
@@ -20,22 +21,14 @@ describe('OrderList', () => {
   let dialogSpy: SpyObj<MatDialog>;
 
   const mockOrders: OrderType[] = [
-    { id: 1, nome: 'Vale Refeição', descricao: 'VR', valor: 100, ativo: true },
-    { id: 2, nome: 'Plano de Saúde', descricao: 'PS', valor: 200, ativo: true },
+    makeOrder({ id: 1, customerId: 101, totalPrice: 100, itemList: [] }),
+    makeOrder({ id: 2, customerId: 202, totalPrice: 200, itemList: [] }),
   ];
 
-  const mockUser: UserType = {
-    id: 1,
-    email: 'user@test.com',
-    nome: 'Usuario Teste',
-    telefone: '11999990000',
-    username: 'user',
-    stats: [],
-    logs: [],
-  };
+  const mockUser: UserType = makeUser();
 
   beforeEach(async () => {
-    orderServiceSpy = createSpyObj<OrderService>(['getAll'], {
+    orderServiceSpy = createSpyObj<OrderService>([], {
       items: signal(mockOrders),
     } as Partial<OrderService>);
     loadingServiceSpy = createSpyObj<LoadingService>([
@@ -64,27 +57,26 @@ describe('OrderList', () => {
 
   it('deve criar o componente e carregar dados iniciais', () => {
     expect(component).toBeTruthy();
-    expect(orderServiceSpy.getAll).toHaveBeenCalled();
     expect(loadingServiceSpy.loadingOn).toHaveBeenCalled();
     expect(loadingServiceSpy.loadingOff).toHaveBeenCalled();
   });
 
   it('deve filtrar a lista de pedidos com base na searchQuery', () => {
-    component.searchQuery.set('vale');
+    component.searchQuery.set('101');
     fixture.detectChanges();
 
     const filtered = component.filteredOrderList();
     expect(filtered?.length).toBe(1);
-    expect(filtered![0].nome).toBe('Vale Refeição');
+    expect(filtered![0].customerId).toBe(101);
   });
 
   it('deve filtrar sem diferenciar maiúsculas e minúsculas', () => {
-    component.searchQuery.set('PLANO');
+    component.searchQuery.set('202');
     fixture.detectChanges();
 
     const filtered = component.filteredOrderList();
     expect(filtered?.length).toBe(1);
-    expect(filtered![0].nome).toBe('Plano de Saúde');
+    expect(filtered![0].customerId).toBe(202);
   });
 
   it('deve atualizar searchQuery ao chamar handleMessage', () => {

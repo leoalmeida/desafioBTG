@@ -118,7 +118,7 @@ describe('CustomerService', () => {
   it('deve propagar erro em getOne', async () => {
     const errorPromise = firstValueFrom(service.getOne(99)).catch((err) => err);
 
-    const req = httpMock.expectOne(`${environment.customersApi}/customer/99`);
+    const req = httpMock.expectOne(`${environment.customersApi}/99`);
     expect(req.request.method).toBe('GET');
     req.flush(
       { message: 'Erro interno' },
