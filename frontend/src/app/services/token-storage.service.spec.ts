@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { TokenStorageService } from './token-storage.service';
-import { AssociadoType } from '../models/associado-type';
+import { UserType } from '../users/user-type';
 import { firstValueFrom } from 'rxjs';
 
 describe('TokenStorageService', () => {
@@ -13,7 +13,7 @@ describe('TokenStorageService', () => {
   const mockEmail = 'joao@teste.com';
   const mockTelefone = '1199999999';
 
-  const mockUser: AssociadoType = {
+  const mockUser: UserType = {
     id: 1,
     nome: mockUsername,
     username: 'joao',
@@ -65,7 +65,7 @@ describe('TokenStorageService', () => {
 
   it('deve retornar objeto vazio se não houver usuário no storage', () => {
     const user = service.getUser();
-    expect(user).toEqual({} as AssociadoType);
+    expect(user).toEqual({} as UserType);
   });
 
   it('deve limpar o storage e resetar o estado no signOut', async () => {

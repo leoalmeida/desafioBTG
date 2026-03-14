@@ -1,0 +1,9 @@
+<app-searchbar (messageEvent)="handleMessage($event)" />
+
+<section class="results">
+  @for (customer of filteredCustomerList(); track customer.id) {
+    <app-customer-card [customer]="customer"></app-customer-card>
+  } @empty {
+    <div class="not-found">Nenhum cliente disponível</div>
+  }
+</section>

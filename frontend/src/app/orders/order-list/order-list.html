@@ -1,0 +1,9 @@
+<app-searchbar (messageEvent)="handleMessage($event)" />
+
+<section class="results">
+  @for (order of filteredOrderList(); track order.id) {
+    <app-order-card [order]="order"></app-order-card>
+  } @empty {
+    <div class="not-found">Nenhum benefício disponível</div>
+  }
+</section>

@@ -1,0 +1,51 @@
+<mat-card
+  [class]="{ created: order().id >= 0, closed: order().itemList.length === -1 }"
+  class="card-button"
+  appearance="outlined"
+>
+  <mat-card-title class="title">
+    <div
+      class="badge-status"
+      [matBadge]="order().itemList.length"
+      matBadgeSize="large"
+      [matBadgeColor]="order().itemList.length > 0 ? 'primary' : 'accent'"
+    ></div>
+    {{ order().id ? 'Pedido #' + order().id : 'Novo Pedido' }}
+  </mat-card-title>
+  <mat-card-content class="description">
+    @for(let item of order().itemList)
+      <ul (click)="onUpdateOrderItem(item)">{{ item.productName }} - {{ item.quantity }} x {{ item.price | currency: "BRL" : "symbol" : "1.2-2" }}</ul>
+    @endfor
+  </mat-card-content>
+  <mat-card-subtitle class="category">
+    Total:
+    {{
+      order().totalPrice | currency: "BRL" : "symbol" : "1.2-2"
+    }}</mat-card-subtitle
+  >
+  <mat-divider></mat-divider>
+  <mat-card-actions class="actionbar" align="end">
+    <button mat-icon-button (click)="onRemoveOrder(confirmDialog)">
+      <mat-icon>delete</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onAddOrderItem(order())">
+      <mat-icon>add</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onSaveOrder(confirmDialog)">
+      <mat-icon>save</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+<ng-template #confirmDialog let-message>
+  <h1 mat-dialog-title>Confirma?</h1>
+  <div mat-dialog-content>
+    <p class="dialog-message">{{ message.message }}</p>
+  </div>
+  <div mat-dialog-actions>
+    <button matButton [mat-dialog-close]="false">Cancelar</button>
+    <button matButton="filled" color="primary" [mat-dialog-close]="true">
+      Confirmar
+    </button>
+  </div>
+</ng-template>

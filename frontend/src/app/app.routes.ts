@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
-import { BeneficioList } from './components/beneficio-list/beneficio-list';
-import { LoginPage } from './components/login/login-page';
+import { LoginPage } from './login/login-page/login-page';
 import { canActivateUser } from './guards/can-activate-user';
-import { AdminBoard } from './components/admin-board/admin-board';
+import { AdminBoard } from './admin/admin-board/admin-board';
 import { canActivateAdmin } from './guards/can-activate-admin';
-import { HomePage } from './components/home-page/home-page';
-import { AcessoNegado } from './components/acesso-negado/acesso-negado';
+import { HomePage } from './core/home-page/home-page';
+import { AcessoNegado } from './core/acesso-negado/acesso-negado';
+import { OrderList } from './orders/order-list/order-list';
+import { CustomerList } from './customers/customer-list/customer-list';
 
 export const routes: Routes = [
   {
@@ -27,10 +28,16 @@ export const routes: Routes = [
     data: { title: 'Acesso Negado' },
   },
   {
-    path: 'beneficios',
-    component: BeneficioList,
+    path: 'customers',
+    component: CustomerList,
     canActivate: [canActivateUser],
-    data: { title: 'Gestão de Benefícios' },
+    data: { title: 'Gestão de Clientes' },
+  },
+  {
+    path: 'orders',
+    component: OrderList,
+    canActivate: [canActivateUser],
+    data: { title: 'Gestão de Pedidos' },
   },
   { path: '**', redirectTo: '' },
 ];
