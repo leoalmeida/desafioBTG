@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   code-quality-service-discovery:
     name: Lint do módulo service-discovery
@@ -60,6 +64,17 @@ jobs:
         run: mvn -B -f service-discovery/pom.xml clean package
       - name: Run Code Quality Analysis do módulo service-discovery
         run: mvn -B -f service-discovery/pom.xml jacoco:report
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: service-discovery/target/site/jacoco/jacoco.xml
+          flags: service-discovery
+          name: service-discovery-coverage
+          fail_ci_if_error: false
+          verbose: true
+
       - name: Upload Coverage Report do módulo service-discovery
         uses: actions/upload-artifact@v6
         with:

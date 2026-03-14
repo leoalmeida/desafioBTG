@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   code-quality-api-gateway:
     name: Lint do módulo api-gateway
@@ -60,6 +64,17 @@ jobs:
         run: mvn -B -f api-gateway/pom.xml clean package
       - name: Run Code Quality Analysis do módulo api-gateway
         run: mvn -B -f api-gateway/pom.xml jacoco:report
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: api-gateway/target/site/jacoco/jacoco.xml
+          flags: api-gateway
+          name: api-gateway-coverage
+          fail_ci_if_error: false
+          verbose: true
+
       - name: Upload Coverage Report do módulo api-gateway
         uses: actions/upload-artifact@v6
         with:

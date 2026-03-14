@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   code-quality-customers:
     name: Lint do módulo ms-customer
@@ -64,6 +68,16 @@ jobs:
 
       - name: Run Code Quality Analysis do módulo ms-customer
         run: mvn -B -f ms-customer/pom.xml jacoco:report
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: ms-customer/target/site/jacoco/jacoco.xml
+          flags: ms-customer
+          name: ms-customer-coverage
+          fail_ci_if_error: false
+          verbose: true
 
       - name: Upload Coverage Report do módulo ms-customer
         uses: actions/upload-artifact@v6
