@@ -13,5 +13,4 @@ public class OrderDto {
     private Long customerId;
     private Double totalPrice;
     private List<OrderItemDto> itemList;
-
 }

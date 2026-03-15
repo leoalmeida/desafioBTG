@@ -39,8 +39,8 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleIllegalArgumentExceptionShouldReturnBadRequest() {
-        ResponseEntity<Object> response = handler.handleIllegalArgumentException(
-                new IllegalArgumentException("invalid input"), request);
+        ResponseEntity<Object> response =
+                handler.handleIllegalArgumentException(new IllegalArgumentException("invalid input"), request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ResponseError body = (ResponseError) response.getBody();
@@ -52,7 +52,8 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleBusinessExceptionShouldReturnUnprocessableEntity() {
-        ResponseEntity<Object> response = handler.handleBusinessException(new BusinessException("business error"), request);
+        ResponseEntity<Object> response =
+                handler.handleBusinessException(new BusinessException("business error"), request);
 
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
         ResponseError body = (ResponseError) response.getBody();
@@ -63,8 +64,8 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleNotFoundExceptionShouldReturnNotFound() {
-        ResponseEntity<Object> response = handler.handleNotFoundException(
-                new NoSuchElementException("missing customer"), request);
+        ResponseEntity<Object> response =
+                handler.handleNotFoundException(new NoSuchElementException("missing customer"), request);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         ResponseError body = (ResponseError) response.getBody();

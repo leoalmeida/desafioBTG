@@ -12,7 +12,7 @@ public interface OrderClient {
 
     @GetMapping("/api/v1/order/{customerId}")
     List<OrderDto> findOrdersByCustomerId(@PathVariable Long customerId);
-    
+
     @DeleteMapping("/api/v1/order/delete/client/{customerId}")
     void deleteByCustomerId(@PathVariable Long customerId);
 }

@@ -8,11 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderItemDto {
-    
+
     private Long id;
     private Long orderId;
     private String productName;
     private Integer quantity;
     private Double price;
-    
 }

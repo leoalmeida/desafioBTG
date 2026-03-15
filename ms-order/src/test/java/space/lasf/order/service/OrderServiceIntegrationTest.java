@@ -40,7 +40,7 @@ class OrderServiceIntegrationTest {
         OrderDto payload = OrderDto.builder()
                 .customerId(101L)
                 .totalPrice(199.8)
-            .itemList(List.of())
+                .itemList(List.of())
                 .build();
 
         OrderDto created = orderService.createOrder(payload);
@@ -60,7 +60,7 @@ class OrderServiceIntegrationTest {
         OrderDto payload = OrderDto.builder()
                 .customerId(202L)
                 .totalPrice(250.0)
-            .itemList(List.of())
+                .itemList(List.of())
                 .build();
 
         OrderDto created = orderService.createOrder(payload);

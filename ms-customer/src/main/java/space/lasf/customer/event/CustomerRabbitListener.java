@@ -1,11 +1,9 @@
 package space.lasf.customer.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-
-import lombok.extern.slf4j.Slf4j;
 import space.lasf.customer.configuracao.RabbitConfig;
 import space.lasf.customer.dto.CustomerDto;
 import space.lasf.customer.service.CustomerService;
@@ -27,11 +25,11 @@ public class CustomerRabbitListener {
         log.info("Cliente criado: {}", event.getId());
         // Aqui você pode adicionar lógica adicional, como enviar notificações, etc.
         CustomerDto customerDto = CustomerDto.builder()
-            .id(event.getId())
-            .name(event.getName())
-            .email(event.getEmail())
-            .phone(event.getPhone())
-            .build();
+                .id(event.getId())
+                .name(event.getName())
+                .email(event.getEmail())
+                .phone(event.getPhone())
+                .build();
         this.customerService.createCustomer(customerDto);
     }
 

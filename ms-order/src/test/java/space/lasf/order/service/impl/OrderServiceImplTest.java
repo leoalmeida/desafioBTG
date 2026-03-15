@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,10 +13,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.springframework.test.util.ReflectionTestUtils;
 import space.lasf.order.core.util.ObjectsValidator;
 import space.lasf.order.domain.model.Order;
@@ -55,15 +54,36 @@ class OrderServiceImplTest {
 
     @Test
     void createOrderShouldSaveOrderAndItems() {
-        OrderItemDto itemIn = OrderItemDto.builder().productName("Book").quantity(2).price(10.0).build();
-        OrderDto dtoIn = OrderDto.builder().customerId(7L).totalPrice(20.0).itemList(List.of(itemIn)).build();
+        OrderItemDto itemIn = OrderItemDto.builder()
+                .productName("Book")
+                .quantity(2)
+                .price(10.0)
+                .build();
+        OrderDto dtoIn = OrderDto.builder()
+                .customerId(7L)
+                .totalPrice(20.0)
+                .itemList(List.of(itemIn))
+                .build();
 
-        Order orderEntity = Order.builder().id(99L).customerId(7L).totalPrice(20.0).build();
-        Order savedOrder = Order.builder().id(1L).customerId(7L).totalPrice(20.0).build();
+        Order orderEntity =
+                Order.builder().id(99L).customerId(7L).totalPrice(20.0).build();
+        Order savedOrder =
+                Order.builder().id(1L).customerId(7L).totalPrice(20.0).build();
 
-        OrderItem itemEntity = OrderItem.builder().id(50L).productName("Book").quantity(2).price(10.0).build();
-        OrderItemDto itemOut = OrderItemDto.builder().orderId(1L).productName("Book").quantity(2).price(10.0).build();
-        OrderDto mappedOrderOut = OrderDto.builder().id(1L).customerId(7L).totalPrice(20.0).build();
+        OrderItem itemEntity = OrderItem.builder()
+                .id(50L)
+                .productName("Book")
+                .quantity(2)
+                .price(10.0)
+                .build();
+        OrderItemDto itemOut = OrderItemDto.builder()
+                .orderId(1L)
+                .productName("Book")
+                .quantity(2)
+                .price(10.0)
+                .build();
+        OrderDto mappedOrderOut =
+                OrderDto.builder().id(1L).customerId(7L).totalPrice(20.0).build();
 
         when(modelMapper.map(dtoIn, Order.class)).thenReturn(orderEntity);
         when(repository.save(orderEntity)).thenReturn(savedOrder);
@@ -87,7 +107,8 @@ class OrderServiceImplTest {
 
     @Test
     void deleteOrderShouldDeleteWhenOrderExists() {
-        when(repository.findById(10L)).thenReturn(Optional.of(Order.builder().id(10L).build()));
+        when(repository.findById(10L))
+                .thenReturn(Optional.of(Order.builder().id(10L).build()));
 
         service.deleteOrder(10L);
 
@@ -120,7 +141,8 @@ class OrderServiceImplTest {
     void deleteOrdersByCustomerIdShouldReturnTrueWhenOrdersExist() {
         Order order = Order.builder().id(1L).customerId(42L).totalPrice(5.0).build();
         when(repository.findByCustomerId(42L)).thenReturn(List.of(order));
-        when(modelMapper.map(order, OrderDto.class)).thenReturn(OrderDto.builder().id(1L).customerId(42L).build());
+        when(modelMapper.map(order, OrderDto.class))
+                .thenReturn(OrderDto.builder().id(1L).customerId(42L).build());
 
         boolean removed = service.deleteOrdersByCustomerId(42L);
 

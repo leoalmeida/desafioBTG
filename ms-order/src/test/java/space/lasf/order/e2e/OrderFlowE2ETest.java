@@ -10,8 +10,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,7 +67,8 @@ class OrderFlowE2ETest {
 
     @Test
     void createAndDeleteOrderShouldFlowThroughRabbitAndPersistInMySql() throws Exception {
-        String requestBody = """
+        String requestBody =
+                """
                 {
                   \"id\": 9001,
                   \"customerId\": 321,

@@ -10,8 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableFeignClients
 public class MsOrderApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MsOrderApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(MsOrderApplication.class, args);
+    }
 }

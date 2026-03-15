@@ -22,12 +22,12 @@ public class RabbitConfig {
     public TopicExchange orderExchange() {
         return new TopicExchange(EXCHANGE);
     }
-    
+
     @Bean
     public Queue orderCreatedQueue() {
         return QueueBuilder.durable(QUEUE_CREATED).build();
     }
-    
+
     @Bean
     public Queue orderDeletedQueue() {
         return QueueBuilder.durable(QUEUE_DELETED).build();

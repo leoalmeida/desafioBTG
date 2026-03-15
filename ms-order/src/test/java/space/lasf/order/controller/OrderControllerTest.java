@@ -48,7 +48,8 @@ class OrderControllerTest {
 
     @Test
     void getOrdersShouldReturnOk() throws Exception {
-        List<OrderDto> orders = List.of(OrderDto.builder().id(1L).customerId(9L).totalPrice(12.5).build());
+        List<OrderDto> orders = List.of(
+                OrderDto.builder().id(1L).customerId(9L).totalPrice(12.5).build());
         when(orderService.getAllOrders()).thenReturn(orders);
 
         mockMvc.perform(get("/api/v1/order"))
@@ -62,7 +63,8 @@ class OrderControllerTest {
 
     @Test
     void getOrderByIdShouldReturnOk() throws Exception {
-        OrderDto order = OrderDto.builder().id(2L).customerId(7L).totalPrice(30.0).build();
+        OrderDto order =
+                OrderDto.builder().id(2L).customerId(7L).totalPrice(30.0).build();
         when(orderService.getOrderById(2L)).thenReturn(order);
 
         mockMvc.perform(get("/api/v1/order/2"))
@@ -86,7 +88,8 @@ class OrderControllerTest {
 
     @Test
     void getOrdersByCustomerIdShouldReturnOk() throws Exception {
-        when(orderService.getOrdersByCustomerId(10L)).thenReturn(List.of(OrderDto.builder().id(1L).customerId(10L).build()));
+        when(orderService.getOrdersByCustomerId(10L))
+                .thenReturn(List.of(OrderDto.builder().id(1L).customerId(10L).build()));
 
         mockMvc.perform(get("/api/v1/order/customer/10"))
                 .andExpect(status().isOk())
@@ -97,7 +100,8 @@ class OrderControllerTest {
 
     @Test
     void createOrderShouldReturnAccepted() throws Exception {
-        OrderDto payload = OrderDto.builder().id(4L).customerId(1L).totalPrice(19.9).build();
+        OrderDto payload =
+                OrderDto.builder().id(4L).customerId(1L).totalPrice(19.9).build();
 
         mockMvc.perform(post("/api/v1/order")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +113,8 @@ class OrderControllerTest {
 
     @Test
     void updateOrderShouldReturnOk() throws Exception {
-        OrderDto payload = OrderDto.builder().id(4L).customerId(1L).totalPrice(29.9).build();
+        OrderDto payload =
+                OrderDto.builder().id(4L).customerId(1L).totalPrice(29.9).build();
         when(orderService.updateOrder(any(OrderDto.class))).thenReturn(payload);
 
         mockMvc.perform(put("/api/v1/order/4")
@@ -124,16 +129,14 @@ class OrderControllerTest {
 
     @Test
     void removeOrdersByCustomerIdShouldReturnNoContent() throws Exception {
-        mockMvc.perform(delete("/api/v1/order/customer/11"))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/v1/order/customer/11")).andExpect(status().isNoContent());
 
         verify(orderService).deleteOrdersByCustomerId(11L);
     }
 
     @Test
     void removeOrderShouldReturnNoContent() throws Exception {
-        mockMvc.perform(delete("/api/v1/order/12"))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/v1/order/12")).andExpect(status().isNoContent());
 
         verify(producer).publishOrderDeleted(12L);
     }

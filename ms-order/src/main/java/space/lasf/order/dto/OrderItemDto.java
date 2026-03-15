@@ -1,6 +1,5 @@
 package space.lasf.order.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,11 +12,10 @@ import lombok.Setter;
 @Setter
 @Builder
 public class OrderItemDto {
-    
+
     private Long id;
     private Long orderId;
     private String productName;
     private Integer quantity;
     private Double price;
-    
 }

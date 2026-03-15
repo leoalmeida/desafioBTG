@@ -9,14 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
 import space.lasf.customer.core.util.ObjectsValidator;
 import space.lasf.customer.domain.model.Customer;
 import space.lasf.customer.domain.repository.CustomerRepository;
 import space.lasf.customer.dto.CustomerDto;
 import space.lasf.customer.dto.OrderDto;
-import space.lasf.customer.service.CustomerService;
 import space.lasf.customer.http.OrderClient;
+import space.lasf.customer.service.CustomerService;
 
 /**
  * Implementação do serviço para gerenciamento de clientes.
@@ -85,7 +84,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional(readOnly = true, isolation = Isolation.SERIALIZABLE)
     public CustomerDto getCustomerById(final Long id) {
-        Customer entityIn = repository.findById(id)
+        Customer entityIn = repository
+                .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + id));
         List<OrderDto> orderList = orderClient.findOrdersByCustomerId(id);
         CustomerDto dtoOut = modelMapper.map(entityIn, CustomerDto.class);
@@ -99,7 +99,8 @@ public class CustomerServiceImpl implements CustomerService {
             throw new IllegalArgumentException("Invalid email: " + email);
         }
 
-        Customer result = repository.findByEmail(email)
+        Customer result = repository
+                .findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with email: " + email));
         List<OrderDto> orderList = orderClient.findOrdersByCustomerId(result.getId());
         CustomerDto dtoOut = modelMapper.map(result, CustomerDto.class);

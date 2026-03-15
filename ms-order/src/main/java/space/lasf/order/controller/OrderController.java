@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import space.lasf.order.dto.OrderDto;
 import space.lasf.order.event.OrderRabbitProducer;
 import space.lasf.order.service.OrderService;
@@ -36,9 +35,7 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<List<OrderDto>> getOrders() {
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(orderService.getAllOrders());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(orderService.getAllOrders());
     }
 
     @GetMapping("/quantity/{customerId}")
@@ -54,9 +51,7 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDto> getOrderById(@PathVariable final Long orderId) {
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(orderService.getOrderById(orderId));
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(orderService.getOrderById(orderId));
     }
 
     @GetMapping("/{orderId}/exists")
@@ -85,8 +80,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<OrderDto> updateOrder(
-            @PathVariable final Long orderId, @RequestBody final OrderDto order) {
+    public ResponseEntity<OrderDto> updateOrder(@PathVariable final Long orderId, @RequestBody final OrderDto order) {
         OrderDto dto = orderService.updateOrder(order);
         return ResponseEntity.ok(dto);
     }
@@ -102,6 +96,4 @@ public class OrderController {
         producer.publishOrderDeleted(orderId);
         return ResponseEntity.noContent().build();
     }
-
-
 }

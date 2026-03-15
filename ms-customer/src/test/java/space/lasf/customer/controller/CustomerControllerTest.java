@@ -48,7 +48,8 @@ class CustomerControllerTest {
 
     @Test
     void getAllCustomersShouldReturnOk() throws Exception {
-        List<CustomerDto> customers = List.of(CustomerDto.builder().id(1L).name("Ana").email("ana@test.com").build());
+        List<CustomerDto> customers = List.of(
+                CustomerDto.builder().id(1L).name("Ana").email("ana@test.com").build());
         when(customerService.getAllCustomers()).thenReturn(customers);
 
         mockMvc.perform(get("/api/v1/customer"))
@@ -62,7 +63,8 @@ class CustomerControllerTest {
 
     @Test
     void getCustomerByIdShouldReturnOk() throws Exception {
-        CustomerDto customer = CustomerDto.builder().id(2L).name("Leo").email("leo@test.com").build();
+        CustomerDto customer =
+                CustomerDto.builder().id(2L).name("Leo").email("leo@test.com").build();
         when(customerService.getCustomerById(2L)).thenReturn(customer);
 
         mockMvc.perform(get("/api/v1/customer/2"))
@@ -75,7 +77,8 @@ class CustomerControllerTest {
 
     @Test
     void checkCustomerExistsShouldReturnTrue() throws Exception {
-        when(customerService.getCustomerById(3L)).thenReturn(CustomerDto.builder().id(3L).build());
+        when(customerService.getCustomerById(3L))
+                .thenReturn(CustomerDto.builder().id(3L).build());
 
         mockMvc.perform(get("/api/v1/customer/3/exists"))
                 .andExpect(status().isOk())
@@ -88,15 +91,15 @@ class CustomerControllerTest {
     void getCustomerByEmailShouldReturnNotFoundWhenInvalidEmail() throws Exception {
         when(customerService.validateCustomerEmail("invalid")).thenReturn(false);
 
-        mockMvc.perform(get("/api/v1/customer/email/invalid"))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/v1/customer/email/invalid")).andExpect(status().isNotFound());
 
         verify(customerService).validateCustomerEmail("invalid");
     }
 
     @Test
     void getCustomerByEmailShouldReturnOkWhenValid() throws Exception {
-        CustomerDto customer = CustomerDto.builder().id(4L).email("ok@test.com").name("Ok").build();
+        CustomerDto customer =
+                CustomerDto.builder().id(4L).email("ok@test.com").name("Ok").build();
         when(customerService.validateCustomerEmail("ok@test.com")).thenReturn(true);
         when(customerService.getCustomerByEmail("ok@test.com")).thenReturn(customer);
 
@@ -110,7 +113,8 @@ class CustomerControllerTest {
 
     @Test
     void searchCustomersByNameShouldReturnOk() throws Exception {
-        when(customerService.getCustomersByName("ana")).thenReturn(List.of(CustomerDto.builder().id(1L).name("Ana").build()));
+        when(customerService.getCustomersByName("ana"))
+                .thenReturn(List.of(CustomerDto.builder().id(1L).name("Ana").build()));
 
         mockMvc.perform(get("/api/v1/customer/search").param("name", "ana"))
                 .andExpect(status().isOk())
@@ -121,7 +125,11 @@ class CustomerControllerTest {
 
     @Test
     void createCustomerShouldReturnAccepted() throws Exception {
-        CustomerDto payload = CustomerDto.builder().name("New").email("new@test.com").phone("119999").build();
+        CustomerDto payload = CustomerDto.builder()
+                .name("New")
+                .email("new@test.com")
+                .phone("119999")
+                .build();
 
         mockMvc.perform(post("/api/v1/customer")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -133,7 +141,8 @@ class CustomerControllerTest {
 
     @Test
     void updateCustomerShouldReturnOk() throws Exception {
-        CustomerDto payload = CustomerDto.builder().id(9L).name("Upd").email("upd@test.com").build();
+        CustomerDto payload =
+                CustomerDto.builder().id(9L).name("Upd").email("upd@test.com").build();
         when(customerService.updateCustomer(any(CustomerDto.class))).thenReturn(payload);
 
         mockMvc.perform(put("/api/v1/customer/9")
@@ -147,8 +156,7 @@ class CustomerControllerTest {
 
     @Test
     void deleteCustomerShouldReturnAccepted() throws Exception {
-        mockMvc.perform(delete("/api/v1/customer/10"))
-                .andExpect(status().isAccepted());
+        mockMvc.perform(delete("/api/v1/customer/10")).andExpect(status().isAccepted());
 
         verify(producer).publishCustomerDeleted(10L);
     }

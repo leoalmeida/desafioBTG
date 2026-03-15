@@ -35,12 +35,16 @@ public class RabbitConfig {
 
     @Bean
     public Binding customerCreatedBinding() {
-        return BindingBuilder.bind(customerCreatedQueue()).to(customerExchange()).with(ROUTING_KEY_CREATED);
+        return BindingBuilder.bind(customerCreatedQueue())
+                .to(customerExchange())
+                .with(ROUTING_KEY_CREATED);
     }
 
     @Bean
     public Binding customerDeletedBinding() {
-        return BindingBuilder.bind(customerDeletedQueue()).to(customerExchange()).with(ROUTING_KEY_DELETED);
+        return BindingBuilder.bind(customerDeletedQueue())
+                .to(customerExchange())
+                .with(ROUTING_KEY_DELETED);
     }
 
     @Bean

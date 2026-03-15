@@ -21,5 +21,4 @@ public interface OrderService {
     void deleteOrder(Long id);
 
     boolean deleteOrdersByCustomerId(Long customerId);
-
 }

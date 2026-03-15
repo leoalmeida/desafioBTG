@@ -42,16 +42,12 @@ public class CustomerController {
 
     @GetMapping
     public ResponseEntity<List<CustomerDto>> getAllCustomers() {
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(customerService.getAllCustomers());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(customerService.getAllCustomers());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDto> getCustomerById(@PathVariable final Long id) {
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(customerService.getCustomerById(id));
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(customerService.getCustomerById(id));
     }
 
     @GetMapping("/{id}/orders")

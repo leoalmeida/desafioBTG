@@ -1,7 +1,5 @@
 package space.lasf.customer.domain.model;
 
-
-import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-
+import jakarta.validation.constraints.NotNull;
 import java.io.Serial;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +19,9 @@ import lombok.NoArgsConstructor;
  * Entidade que representa um cliente.
  */
 @Entity
-@Table(name = "customers",
-    indexes = {@Index(name = "name_search_key_idx", columnList = "name", unique = false)})
+@Table(
+        name = "customers",
+        indexes = {@Index(name = "name_search_key_idx", columnList = "name", unique = false)})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

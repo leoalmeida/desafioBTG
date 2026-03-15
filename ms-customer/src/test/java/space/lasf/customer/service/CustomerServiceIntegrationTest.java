@@ -69,16 +69,10 @@ class CustomerServiceIntegrationTest {
 
     @Test
     void getAllCustomersShouldReturnPersistedCustomers() {
-        customerService.createCustomer(CustomerDto.builder()
-                .name("A")
-                .email("a@test.com")
-                .phone("1")
-                .build());
-        customerService.createCustomer(CustomerDto.builder()
-                .name("B")
-                .email("b@test.com")
-                .phone("2")
-                .build());
+        customerService.createCustomer(
+                CustomerDto.builder().name("A").email("a@test.com").phone("1").build());
+        customerService.createCustomer(
+                CustomerDto.builder().name("B").email("b@test.com").phone("2").build());
 
         List<CustomerDto> all = customerService.getAllCustomers();
 

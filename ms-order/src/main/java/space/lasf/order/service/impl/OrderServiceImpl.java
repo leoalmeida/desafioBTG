@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
 import space.lasf.order.core.util.ObjectsValidator;
 import space.lasf.order.domain.model.Order;
 import space.lasf.order.domain.model.OrderItem;
@@ -27,7 +26,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private final OrderRepository repository;
-    
+
     @Autowired
     private final OrderItemRepository orderItemRepository;
 
@@ -43,16 +42,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderDto createOrder(final OrderDto dto) {
-        Order orderEntity = modelMapper.map(dto, Order.class); 
+        Order orderEntity = modelMapper.map(dto, Order.class);
         orderEntity.setId(null); // Garante que o ID seja nulo para criação
         validador.validate(orderEntity);
-        
+
         Order result = repository.save(orderEntity);
 
         if (result == null) {
             throw new IllegalStateException("Erro ao atualizar o pedido com ID: " + dto.getId());
         }
-        
+
         List<OrderItem> itemEntities = dto.getItemList().stream()
                 .map(p -> {
                     OrderItem item = modelMapper.map(p, OrderItem.class);
@@ -61,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
                     itemValidator.validate(item);
                     return item;
                 })
-                .collect(Collectors.toList()); 
+                .collect(Collectors.toList());
 
         orderItemRepository.saveAll(itemEntities);
 
@@ -69,22 +68,22 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItemDto> resultItemDtos = itemEntities.stream()
                 .map(p -> modelMapper.map(p, OrderItemDto.class))
                 .collect(Collectors.toList());
-        resultDto.setItemList(resultItemDtos);        
-        return resultDto; 
+        resultDto.setItemList(resultItemDtos);
+        return resultDto;
     }
 
     @Override
     @Transactional
     public OrderDto updateOrder(final OrderDto dto) {
-        Order orderEntity = modelMapper.map(dto, Order.class); 
+        Order orderEntity = modelMapper.map(dto, Order.class);
         validador.validate(orderEntity);
-        
+
         Order result = repository.save(orderEntity);
 
         if (result == null) {
             throw new IllegalStateException("Erro ao atualizar o pedido com ID: " + dto.getId());
         }
-        
+
         List<OrderItem> itemEntities = dto.getItemList().stream()
                 .map(p -> {
                     OrderItem item = modelMapper.map(p, OrderItem.class);
@@ -101,15 +100,16 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItemDto> resultItemDtos = itemEntities.stream()
                 .map(p -> modelMapper.map(p, OrderItemDto.class))
                 .collect(Collectors.toList());
-        resultDto.setItemList(resultItemDtos);        
-        return resultDto; 
+        resultDto.setItemList(resultItemDtos);
+        return resultDto;
     }
 
-    
     @Override
     @Transactional(readOnly = true, isolation = Isolation.SERIALIZABLE)
     public OrderDto getOrderById(final Long id) {
-        Order entityIn = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado com ID: " + id));
+        Order entityIn = repository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado com ID: " + id));
         OrderDto orderDto = modelMapper.map(entityIn, OrderDto.class);
         return orderDto;
     }
@@ -118,21 +118,21 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public List<OrderDto> getAllOrders() {
         List<Order> orderEntities = repository.findAll();
-        
+
         return orderEntities.stream()
                 .map(p -> modelMapper.map(p, OrderDto.class))
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<OrderDto> getOrdersByCustomerId(final Long customerId) {
         List<Order> orderEntities = repository.findByCustomerId(customerId);
         return orderEntities.stream()
-                        .map(order -> modelMapper.map(order, OrderDto.class))
-                        .collect(Collectors.toList());
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .collect(Collectors.toList());
     }
-            
+
     @Override
     @Transactional
     public void deleteOrder(final Long id) {
@@ -154,7 +154,4 @@ public class OrderServiceImpl implements OrderService {
         repository.deleteByCustomerId(customerId);
         return true;
     }
-
-
-
 }

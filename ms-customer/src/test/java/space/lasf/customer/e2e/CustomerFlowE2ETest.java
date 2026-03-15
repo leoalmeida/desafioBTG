@@ -9,8 +9,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,8 +67,7 @@ class CustomerFlowE2ETest {
                 }
 
                 @Override
-                public void deleteByCustomerId(Long customerId) {
-                }
+                public void deleteByCustomerId(Long customerId) {}
             };
         }
     }
@@ -83,7 +82,8 @@ class CustomerFlowE2ETest {
 
     @Test
     void createAndDeleteCustomerShouldFlowThroughRabbitAndPersistInMySql() throws Exception {
-        String requestBody = """
+        String requestBody =
+                """
                 {
                   \"id\": 7001,
                   \"name\": \"Maria\",
