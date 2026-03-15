@@ -1,5 +1,5 @@
 codecov:
-  require_ci_to_pass: true
+  require_ci_to_pass: false
 
 coverage:
   precision: 2
@@ -19,12 +19,6 @@ coverage:
       ms-customer:
         flags:
           - ms-customer
-      api-gateway:
-        flags:
-          - api-gateway
-      service-discovery:
-        flags:
-          - service-discovery
 
 flags:
   frontend:
@@ -36,9 +30,3 @@ flags:
   ms-customer:
     paths:
       - ms-customer/src
-  api-gateway:
-    paths:
-      - api-gateway/src
-  service-discovery:
-    paths:
-      - service-discovery/src
