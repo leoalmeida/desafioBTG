@@ -157,3 +157,19 @@ jobs:
           name: frontend-dist
           path: frontend/dist/
           retention-days: 1
+
+
+  #zap-scan:
+  #  needs: build-frontend
+  #  uses: ./.github/workflows/zapscan.yml
+  #  secrets: inherit
+  
+  #docker:
+  #  needs: zap-scan
+  #  uses: ./.github/workflows/docker.yml
+  #  secrets: inherit
+  
+  #deploy_google:
+  #  needs: docker
+  #  uses: ./.github/workflows/release-gcloud.yml
+  #  secrets: inherit
