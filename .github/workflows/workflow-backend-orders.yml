@@ -1,4 +1,4 @@
-name: CI Pipeline for ms-order Module
+name: ms-order Module CI Pipeline
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   code-quality-orders:
-    name: Lint do módulo ms-order
+    name: ms-order Linting and Code Quality Analysis
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -47,7 +47,7 @@ jobs:
   
   test-orders:
     needs: [code-quality-orders]
-    name: Execute tests for Order Module
+    name: ms-order Module Automated Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -88,6 +88,7 @@ jobs:
 
   build-orders:
     needs: [test-orders]
+    name: ms-order Module Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

@@ -1,4 +1,4 @@
-name: CI Pipeline for frontend Module
+name: Frontend Module CI Pipeline
 
 on:
   push:
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   lint-frontend:
-    name: Lint frontend
+    name: Frontend Module Linting and Code Quality Analysis
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -37,7 +37,7 @@ jobs:
         run: npm run lint
 
   test-services-frontend:
-    name: Run services layer tests
+    name: Frontend Module Services Tests
     needs: [lint-frontend]
     runs-on: ubuntu-latest
     defaults:
@@ -61,7 +61,7 @@ jobs:
         run: npm run test:services:ci
 
   test-components-frontend:
-    name: Run components layer tests
+    name: Frontend Module Component Tests
     needs: [lint-frontend]
     runs-on: ubuntu-latest
     defaults:
@@ -85,7 +85,7 @@ jobs:
         run: npm run test:components:ci
 
   coverage-frontend:
-    name: Validate coverage thresholds
+    name: Frontend Module Coverage
     needs: [lint-frontend, test-services-frontend, test-components-frontend]
     runs-on: ubuntu-latest
     defaults:
@@ -126,6 +126,7 @@ jobs:
           retention-days: 1
 
   build-frontend:
+    name: Frontend Module Build and Artifact Upload
     runs-on: ubuntu-latest # Use the latest Ubuntu runner
     needs: [lint-frontend, test-services-frontend, test-components-frontend, coverage-frontend]
     strategy:
