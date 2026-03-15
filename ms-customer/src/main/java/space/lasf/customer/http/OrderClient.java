@@ -10,9 +10,9 @@ import space.lasf.customer.dto.OrderDto;
 @FeignClient("ms-order")
 public interface OrderClient {
 
-    @GetMapping("/api/v1/order/{customerId}")
+    @GetMapping("/api/v1/order/customer/{customerId}")
     List<OrderDto> findOrdersByCustomerId(@PathVariable Long customerId);
 
-    @DeleteMapping("/api/v1/order/delete/client/{customerId}")
+    @DeleteMapping("/api/v1/order/customer/{customerId}")
     void deleteByCustomerId(@PathVariable Long customerId);
 }
