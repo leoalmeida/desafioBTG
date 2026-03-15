@@ -2,44 +2,56 @@
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
-title BTG - Componentes de Backend
+title BTG Desafio - Componentes Backend (C4 Level 3)
 
 Container_Boundary(customer_service, "ms-customer") {
-	Component(customer_controller, "CustomerController", "Spring Web", "Endpoints de cliente")
-	Component(customer_service_layer, "CustomerServiceImpl", "Service", "Regras de negocio")
-	Component(customer_repo, "CustomerRepository", "Spring Data JPA", "Persistencia de clientes")
-	Component(customer_producer, "CustomerRabbitProducer", "Spring AMQP", "Publica eventos")
-	Component(customer_listener, "CustomerRabbitListener", "Spring AMQP", "Consome eventos")
-	Component(order_client, "OrderClient", "OpenFeign", "Integra com ms-order")
+    Component(home_ctrl_c, "HomeController", "Spring Web", "Health-check: GET /")
+    Component(customer_controller, "CustomerController", "Spring Web", "CRUD de clientes\nGET/POST/PUT/DELETE /api/v1/customer")
+    Component(exc_handler_c, "GlobalExceptionHandler", "@ControllerAdvice", "Tratamento centralizado de erros HTTP")
+    Component(customer_service_layer, "CustomerServiceImpl", "Spring @Service", "Regras de negócio de clientes")
+    Component(customer_repo, "CustomerRepository", "Spring Data JPA", "Persistência de Customer")
+    Component(customer_producer, "CustomerRabbitProducer", "Spring AMQP", "Publica customer.created / customer.deleted")
+    Component(customer_listener, "CustomerRabbitListener", "Spring AMQP", "Consome customer.queue.created / customer.queue.deleted")
+    Component(order_client, "OrderClient", "@FeignClient(ms-order)", "GET /api/v1/order/customer/{id}\nDELETE /api/v1/order/customer/{id}")
+    Component(rabbit_config_c, "RabbitConfig", "Spring @Configuration", "Define customer.exchange,\ncustomer.queue.created, customer.queue.deleted")
+    Component(code_gen_c, "CodeGenerator", "Spring @Component", "Gerador de códigos únicos")
 }
 
 Container_Boundary(order_service, "ms-order") {
-	Component(order_controller, "OrderController", "Spring Web", "Endpoints de pedido")
-	Component(order_service_layer, "OrderServiceImpl", "Service", "Regras de negocio")
-	Component(order_repo, "OrderRepository", "Spring Data JPA", "Persistencia de pedidos")
-	Component(order_item_repo, "OrderItemRepository", "Spring Data JPA", "Persistencia de itens")
-	Component(order_producer, "OrderRabbitProducer", "Spring AMQP", "Publica eventos")
-	Component(order_listener, "OrderRabbitListener", "Spring AMQP", "Consome eventos")
+    Component(home_ctrl_o, "HomeController", "Spring Web", "Health-check: GET /")
+    Component(order_controller, "OrderController", "Spring Web", "CRUD de pedidos\nGET/POST/PUT/DELETE /api/v1/order")
+    Component(exc_handler_o, "GlobalExceptionHandler", "@ControllerAdvice", "Tratamento centralizado de erros HTTP")
+    Component(order_service_layer, "OrderServiceImpl", "Spring @Service", "Regras de negócio de pedidos")
+    Component(order_repo, "OrderRepository", "Spring Data JPA", "Persistência de Order")
+    Component(order_item_repo, "OrderItemRepository", "Spring Data JPA", "Persistência de OrderItem")
+    Component(order_producer, "OrderRabbitProducer", "Spring AMQP", "Publica order.created / order.deleted")
+    Component(order_listener, "OrderRabbitListener", "Spring AMQP", "Consome order.queue.created / order.queue.deleted")
+    Component(rabbit_config_o, "RabbitConfig", "Spring @Configuration", "Define order.exchange,\norder.queue.created, order.queue.deleted")
+    Component(circuit_breaker, "Circuit Breaker", "Resilience4j", "Proteção de atualizarPedido:\nslidingWindowSize=3, waitInOpen=50s")
 }
 
-ComponentDb(mysql, "MySQL 8.4", "Database", "Persistencia")
-ComponentQueue(rabbitmq, "RabbitMQ", "AMQP", "Mensageria")
+ComponentDb(mysql, "MySQL 8.4", "Database", "customers, orders, order_items")
+ComponentQueue(rabbitmq, "RabbitMQ", "AMQP", "customer.exchange / order.exchange")
 
-Rel(customer_controller, customer_service_layer, "Chama")
-Rel(customer_service_layer, customer_repo, "Le e grava")
-Rel(customer_service_layer, order_client, "Chama")
-Rel(customer_producer, rabbitmq, "Publica")
-Rel(rabbitmq, customer_listener, "Entrega")
-Rel(customer_listener, customer_service_layer, "Chama")
-Rel(customer_repo, mysql, "Armazena dados")
+' ms-customer
+Rel(customer_controller, customer_service_layer, "Delega")
+Rel(customer_controller, customer_producer, "Publica evento")
+Rel(customer_service_layer, customer_repo, "Lê e grava")
+Rel(customer_service_layer, order_client, "Chama ao excluir cliente")
+Rel(customer_producer, rabbitmq, "AMQP publish")
+Rel(rabbitmq, customer_listener, "AMQP deliver")
+Rel(customer_listener, customer_service_layer, "Delega criação/remoção")
+Rel(customer_repo, mysql, "JDBC / JPA")
 
-Rel(order_controller, order_service_layer, "Chama")
-Rel(order_service_layer, order_repo, "Le e grava")
-Rel(order_service_layer, order_item_repo, "Le e grava")
-Rel(order_producer, rabbitmq, "Publica")
-Rel(rabbitmq, order_listener, "Entrega")
-Rel(order_listener, order_service_layer, "Chama")
-Rel(order_repo, mysql, "Armazena dados")
-Rel(order_item_repo, mysql, "Armazena dados")
+' ms-order
+Rel(order_controller, order_service_layer, "Delega")
+Rel(order_controller, order_producer, "Publica evento")
+Rel(order_service_layer, order_repo, "Lê e grava")
+Rel(order_service_layer, order_item_repo, "Lê e grava")
+Rel(order_producer, rabbitmq, "AMQP publish")
+Rel(rabbitmq, order_listener, "AMQP deliver")
+Rel(order_listener, order_service_layer, "Delega criação/remoção")
+Rel(order_repo, mysql, "JDBC / JPA")
+Rel(order_item_repo, mysql, "JDBC / JPA")
 
 @enduml

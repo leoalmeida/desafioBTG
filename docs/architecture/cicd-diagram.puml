@@ -1,38 +1,62 @@
 @startuml cicd_diagram
 
-title BTG - CI/CD Pipeline (GitHub Actions)
+title BTG Desafio - CI/CD Pipelines (GitHub Actions — push to main)
 
 actor Desenvolvedor
 
-rectangle GitHub {
+rectangle "GitHub (push to main)" as repo
 
-    Desenvolvedor -> "Repositorio Git" : Envia codigo
-
+rectangle "workflow-frontend.yml" as wf_front {
+    rectangle "lint-frontend\n(ESLint)" as lint_f
+    rectangle "test-services-frontend\n(Vitest services)" as test_svc_f
+    rectangle "test-components-frontend\n(Vitest components)" as test_comp_f
+    rectangle "coverage-frontend\n(Vitest threshold + Codecov)" as cov_f
+    rectangle "build-frontend\n(ng build + artifact upload)" as build_f
 }
 
-rectangle "GitHub Actions" {
-
-    "workflow-frontend.yml" as wf_front
-    "workflow-backend-customers.yml" as wf_customer
-    "workflow-backend-orders.yml" as wf_order
-    "test + e2e + jacoco" as quality_gate
-    "upload de artefato" as artifact
-
+rectangle "workflow-backend-customers.yml" as wf_customer {
+    rectangle "code-quality-customers\n(Spotless / Checkstyle / PMD / SpotBugs)" as quality_c
+    rectangle "test-customers\n(Maven clean package + JaCoCo + Codecov)" as test_c
 }
 
-rectangle "Cobertura" {
-    "Codecov (upload OIDC)" as codecov
+rectangle "workflow-backend-orders.yml" as wf_order {
+    rectangle "code-quality-orders\n(Spotless / Checkstyle / PMD / SpotBugs)" as quality_o
+    rectangle "test-orders\n(Maven clean package + E2E + JaCoCo + Codecov)" as test_o
 }
 
-"Repositorio Git" --> wf_front
-"Repositorio Git" --> wf_customer
-"Repositorio Git" --> wf_order
+rectangle "docker.yml\n(workflow_call)" as docker_wf {
+    rectangle "Build e push Docker Hub\n(ms-customer / ms-order / frontend)" as docker_push
+}
 
-wf_front --> quality_gate
-wf_customer --> quality_gate
-wf_order --> quality_gate
+rectangle "zapscan.yml" as zap_wf {
+    rectangle "OWASP ZAP DAST Scan" as zap_scan
+}
 
-quality_gate --> artifact
-quality_gate --> codecov
+rectangle "release-gcloud.yml" as release_wf {
+    rectangle "Release para Google Cloud" as gcloud_release
+}
+
+Desenvolvedor --> repo : git push
+
+repo --> wf_front
+repo --> wf_customer
+repo --> wf_order
+repo --> zap_wf
+
+lint_f --> test_svc_f
+lint_f --> test_comp_f
+test_svc_f --> cov_f
+test_comp_f --> cov_f
+cov_f --> build_f
+
+quality_c --> test_c
+quality_o --> test_o
+
+wf_front --> docker_wf : workflow_call
+wf_customer --> docker_wf : workflow_call
+wf_order --> docker_wf : workflow_call
+
+wf_customer --> release_wf : workflow_call
+wf_order --> release_wf : workflow_call
 
 @enduml

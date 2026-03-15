@@ -2,47 +2,47 @@
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-title BTG - Diagrama de Containers
+title BTG Desafio - Diagrama de Containers (C4 Level 2)
 
-Person(user, "Usuario")
+Person(user, "Usuário")
 
-System_Boundary(system, "Plataforma BTG") {
+System_Boundary(btg, "Plataforma BTG Desafio") {
 
-    Container(frontend, "Frontend", "SPA", "Interface do usuario")
+    Container(frontend, "Frontend", "Angular SPA\n(Node 22, Angular 20)", "Interface do usuário")
 
-    Container(api_gateway, "API Gateway", "Spring Cloud Gateway", "Ponto de entrada")
+    Container(api_gateway, "API Gateway", "Spring Cloud Gateway 4.x\n(repositório separado, porta 8082)", "Ponto único de entrada,\nroteamento e balanceamento de carga")
 
-    Container(discovery, "Service Discovery", "Spring Cloud Netflix Eureka", "Registro de servicos")
+    Container(discovery, "Service Discovery", "Spring Cloud Netflix Eureka\n(repositório separado, porta 8761)", "Registro e descoberta de instâncias")
 
-    Container(ms_customer, "Customer Service", "Spring Boot", "Gestao de clientes")
+    Container(ms_customer, "ms-customer", "Spring Boot 3.5.4 / Java 17", "Gestão de clientes\nPorta dinâmica (atribuída pelo Eureka)")
 
-    Container(ms_order, "Order Service", "Spring Boot", "Gestao de pedidos")
+    Container(ms_order, "ms-order", "Spring Boot 3.5.4 / Java 17\n+ Resilience4j Circuit Breaker", "Gestão de pedidos e itens\nPorta dinâmica (atribuída pelo Eureka)")
 
-    ContainerDb(mysql, "MySQL 8.4", "Banco relacional", "Persistencia")
+    ContainerDb(mysql, "MySQL 8.4", "Banco relacional", "Tabelas: customers, orders, order_items")
 
-    ContainerQueue(rabbitmq, "RabbitMQ", "Broker AMQP", "Mensageria assincrona")
+    ContainerQueue(rabbitmq, "RabbitMQ 3", "Broker AMQP", "Exchanges: customer.exchange, order.exchange")
 
 }
 
-Rel(user, frontend, "Usa")
+Rel(user, frontend, "Usa", "HTTP")
+Rel(frontend, api_gateway, "Chama", "REST / HTTP")
 
-Rel(frontend, api_gateway, "REST")
+Rel(api_gateway, discovery, "Resolve instâncias", "HTTP")
+Rel(api_gateway, ms_customer, "Roteia /api/v1/customer/**", "HTTP")
+Rel(api_gateway, ms_order, "Roteia /api/v1/order/**", "HTTP")
 
-Rel(api_gateway, discovery, "Resolve servicos")
-Rel(api_gateway, ms_customer, "Roteia")
-Rel(api_gateway, ms_order, "Roteia")
+Rel(ms_customer, discovery, "Registra / descobre")
+Rel(ms_order, discovery, "Registra / descobre")
 
-Rel(ms_customer, discovery, "Registra")
-Rel(ms_order, discovery, "Registra")
+Rel(ms_customer, mysql, "Lê e grava", "JDBC / JPA")
+Rel(ms_order, mysql, "Lê e grava", "JDBC / JPA")
 
-Rel(ms_customer, mysql, "Le e grava")
-Rel(ms_order, mysql, "Le e grava")
+Rel(ms_customer, rabbitmq, "Publica customer.created\ncustomer.deleted", "AMQP")
+Rel(rabbitmq, ms_customer, "Consome customer.queue.created\ncustomer.queue.deleted", "AMQP")
 
-Rel(ms_customer, rabbitmq, "Publica eventos")
-Rel(ms_customer, rabbitmq, "Consome eventos")
-Rel(ms_order, rabbitmq, "Publica eventos")
-Rel(ms_order, rabbitmq, "Consome eventos")
+Rel(ms_order, rabbitmq, "Publica order.created\norder.deleted", "AMQP")
+Rel(rabbitmq, ms_order, "Consome order.queue.created\norder.queue.deleted", "AMQP")
 
-Rel(ms_customer, ms_order, "Chamadas sincronas", "OpenFeign/HTTP")
+Rel(ms_customer, ms_order, "Deleta pedidos ao remover cliente", "OpenFeign / HTTP\nDELETE /api/v1/order/customer/{id}")
 
 @enduml

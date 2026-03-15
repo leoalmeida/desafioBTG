@@ -1,0 +1,50 @@
+@startuml retry_dlq_pattern
+
+title BTG Desafio - Padrão Retry / Dead Letter Queue (Recomendado)
+
+note as disclaimer
+    Este diagrama descreve o padrão recomendado para
+    resiliência no consumo de mensagens.
+    A implementação atual usa QueueBuilder.durable() sem DLQ.
+    Recomenda-se adicionar DLQ para produção.
+end note
+
+rectangle "RabbitMQ" {
+    queue "order.queue.created\n[durable]" as main_q
+    queue "order.queue.created.retry\n[durable, x-message-ttl=5000ms]" as retry_q
+    queue "order.queue.created.dlq\n[durable]" as dlq
+    component "order.exchange" as exchange
+    component "order.exchange.retry" as retry_exchange
+    component "order.exchange.dlq" as dlq_exchange
+}
+
+component "ms-order\n@RabbitListener" as consumer
+component "DLQ Monitor\n(alerta / reprocessamento manual)" as dlq_monitor
+
+exchange --> main_q : routing key: order.created
+main_q --> consumer : entrega (tentativa 1)
+
+consumer --> retry_exchange : falha\n(x-death count < 3)
+retry_exchange --> retry_q : aguarda TTL (5s)
+retry_q --> main_q : reencaminha para fila principal
+
+consumer --> dlq_exchange : 3 tentativas falharam
+dlq_exchange --> dlq : mensagem na DLQ
+dlq --> dlq_monitor : monitoramento e alerta
+
+note right of consumer
+    Estratégia de retry:
+    tentativa 1: imediato
+    tentativa 2: após 5s (via retry queue)
+    tentativa 3: após mais 5s
+    → DLQ após 3 falhas
+end note
+
+note right of dlq
+    Dead Letter Queue permite
+    auditoria e reprocessamento
+    manual das mensagens que
+    falharam persistentemente.
+end note
+
+@enduml

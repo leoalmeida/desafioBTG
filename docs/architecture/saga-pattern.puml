@@ -1,0 +1,48 @@
+@startuml saga_pattern_diagram
+
+title BTG Desafio - Saga de Exclusão de Cliente (Choreography-based)
+
+actor Cliente
+
+participant "API Gateway\n:8082" as gateway
+participant "Customer Service\n(ms-customer)" as customer
+participant "customer.exchange" as exchange
+participant "customer.queue.deleted\n[durable]" as queue
+participant "Order Service\n(via OpenFeign)" as order
+database "MySQL 8.4" as db
+
+Cliente -> gateway : DELETE /api/v1/customer/{id}
+gateway -> customer : DELETE /api/v1/customer/{id}
+customer -> exchange : publica DefaultEvent(id)\n(routing key: customer.deleted)
+customer --> gateway : 202 Accepted
+
+activate queue
+exchange -> queue : entrega mensagem
+
+activate customer
+queue -> customer : @RabbitListener\nhandleCustomerDeleted(DefaultEvent)
+
+note right of customer
+    Saga de compensação:
+    antes de remover o cliente,
+    remove todos os seus pedidos.
+end note
+
+customer -> order : [OpenFeign]\nDELETE /api/v1/order/customer/{id}
+order -> db : DELETE order_items WHERE order_id IN (...)\nDELETE orders WHERE customer_id = {id}
+order --> customer : 204 No Content
+
+customer -> db : DELETE customers WHERE id = {id}
+deactivate customer
+deactivate queue
+
+note right of db
+    Padrão Saga coreografado:
+    Não há orquestrador central.
+    O evento customer.deleted aciona
+    a compensação (remoção dos pedidos)
+    antes da remoção do próprio cliente.
+    Comunicação order ← customer via OpenFeign.
+end note
+
+@enduml

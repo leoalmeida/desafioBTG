@@ -1,0 +1,43 @@
+@startuml outbox_pattern_diagram
+
+title BTG Desafio - Outbox Pattern (Recomendado)
+
+note as disclaimer
+    Este diagrama descreve o padrão Outbox recomendado
+    para garantir at-least-once delivery e consistência
+    entre persistência e publicação de eventos.
+    A implementação atual publica diretamente no
+    RabbitMQ sem tabela outbox.
+end note
+
+component "CustomerController\n/ OrderController" as controller
+database "MySQL 8.4" as db
+component "Tabela outbox_events\n(id, event_type, payload, status, created_at)" as outbox
+component "Event Relay\n(@Scheduled ou Debezium CDC)" as relay
+component "RabbitMQ\ncustomer.exchange / order.exchange" as mq
+
+controller --> db : BEGIN TRANSACTION\nINSERT INTO customers / orders
+controller --> outbox : INSERT INTO outbox_events\n(event_type, payload, status='PENDING')\nCOMMIT TRANSACTION (atômico com acima)
+
+activate relay
+relay --> outbox : SELECT * FROM outbox_events\nWHERE status = 'PENDING'
+relay --> mq : publish event
+outbox <-- relay : UPDATE outbox_events\nSET status = 'SENT'
+deactivate relay
+
+note right of db
+    Atomicidade garantida pela transação SQL:
+    a gravação do domínio e do evento
+    na tabela outbox ocorrem juntas.
+    Nunca há evento sem persistência
+    nem persistência sem evento.
+end note
+
+note right of relay
+    Garante at-least-once delivery.
+    O consumer (RabbitListener) deve
+    ser idempotente para lidar com
+    entregas duplicadas.
+end note
+
+@enduml

@@ -1,0 +1,60 @@
+@startuml event_flow_diagram
+
+title BTG Desafio - Fluxo de Eventos (Visão Geral)
+
+rectangle "ms-customer" {
+    component "CustomerController" as cc
+    component "CustomerRabbitProducer" as cp
+    component "CustomerRabbitListener" as cl
+    component "CustomerService" as cs
+    component "OrderClient (Feign)" as oc
+}
+
+rectangle "ms-order" {
+    component "OrderController" as oc2
+    component "OrderRabbitProducer" as op
+    component "OrderRabbitListener" as ol
+    component "OrderService" as os
+}
+
+rectangle "RabbitMQ" {
+    rectangle "customer.exchange [TopicExchange]" {
+        queue "customer.queue.created" as cqc
+        queue "customer.queue.deleted" as cqd
+    }
+    rectangle "order.exchange [TopicExchange]" {
+        queue "order.queue.created" as oqc
+        queue "order.queue.deleted" as oqd
+    }
+}
+
+database "MySQL 8.4" as db
+
+cc --> cp : POST /api/v1/customer\n→ publishCustomerCreated()
+cc --> cp : DELETE /api/v1/customer/{id}\n→ publishCustomerDeleted()
+
+cp --> cqc : routing key: customer.created
+cp --> cqd : routing key: customer.deleted
+
+cqc --> cl : @RabbitListener
+cqd --> cl : @RabbitListener
+
+cl --> cs : createCustomer() / deleteCustomer()
+cs --> oc : [OpenFeign] DELETE /api/v1/order/customer/{id}\n(apenas no fluxo de exclusão)
+cs --> db : CRUD customers
+
+oc --> os : DELETE orders WHERE customer_id
+os --> db : CRUD orders / order_items
+
+oc2 --> op : POST /api/v1/order\n→ publishOrderEvent()
+oc2 --> op : DELETE /api/v1/order/{id}\n→ publishOrderDeleted()
+
+op --> oqc : routing key: order.created
+op --> oqd : routing key: order.deleted
+
+oqc --> ol : @RabbitListener
+oqd --> ol : @RabbitListener
+
+ol --> os : createOrder() / deleteOrder()
+
+@enduml

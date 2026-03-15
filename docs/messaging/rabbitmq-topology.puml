@@ -1,0 +1,50 @@
+@startuml rabbitmq_topology
+
+title BTG Desafio - Topologia RabbitMQ
+
+rectangle "ms-customer" {
+    component "CustomerRabbitProducer" as cp
+    component "CustomerRabbitListener" as cl
+}
+
+rectangle "customer.exchange\n[TopicExchange]" as ce {
+    component "routing key: customer.created" as ck1
+    component "routing key: customer.deleted" as ck2
+}
+
+rectangle "Filas" {
+    queue "customer.queue.created\n[durable]" as cqc
+    queue "customer.queue.deleted\n[durable]" as cqd
+    queue "order.queue.created\n[durable]" as oqc
+    queue "order.queue.deleted\n[durable]" as oqd
+}
+
+rectangle "order.exchange\n[TopicExchange]" as oe {
+    component "routing key: order.created" as ok1
+    component "routing key: order.deleted" as ok2
+}
+
+rectangle "ms-order" {
+    component "OrderRabbitProducer" as op
+    component "OrderRabbitListener" as ol
+}
+
+cp --> ce : publica CustomerCreatedEvent\nou DefaultEvent
+ck1 --> cqc : binding customer.created
+ck2 --> cqd : binding customer.deleted
+cqc --> cl : @RabbitListener\nhandleCustomerCreated(CustomerCreatedEvent)
+cqd --> cl : @RabbitListener\nhandleCustomerDeleted(DefaultEvent)
+
+op --> oe : publica OrderEvent\nou DefaultEvent
+ok1 --> oqc : binding order.created
+ok2 --> oqd : binding order.deleted
+oqc --> ol : @RabbitListener\nhandle(OrderEvent)
+oqd --> ol : @RabbitListener\nhandleOrderDeleted(DefaultEvent)
+
+note bottom of ce
+    TopicExchange permite padrões de routing key.
+    Cada microserviço possui seu próprio exchange
+    e é o único publisher e consumer das suas filas.
+end note
+
+@enduml

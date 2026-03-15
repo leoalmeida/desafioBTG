@@ -1,60 +1,71 @@
 @startuml deployment_diagram
 
-title BTG - Diagrama de Deploy (Docker Compose)
+title BTG Desafio - Diagrama de Deploy (Docker Compose)
 
-node "Usuario" {
+node "Usuário" {
     component "Navegador"
 }
 
-node "Host Docker" {
-    node "frontend container" {
+node "Host Docker - desafioBTG\n(docker-compose.yaml)" {
+
+    node "frontend container\n(porta: FRONTEND_LOCAL_PORT → FRONTEND_DOCKER_PORT)" {
         component Frontend
     }
 
-    node "api-gateway container" {
-        component "API Gateway"
-    }
-
-    node "service-discovery container" {
-        component "Service Discovery (Eureka)"
-    }
-
-    node "ms-customer container" {
+    node "ms-customer container\n(porta: SPRING_CUSTOMER_LOCAL_PORT → SPRING_CUSTOMER_DOCKER_PORT)" {
         component "Customer Service"
     }
 
-    node "ms-order container" {
+    node "ms-order container\n(porta: SPRING_ORDER_LOCAL_PORT → SPRING_ORDER_DOCKER_PORT)" {
         component "Order Service"
     }
 
-    node "rabbitmq container" {
+    node "rabbitmq container\n(5672 AMQP / 15672 Management UI)" {
         component RabbitMQ
     }
 
-    node "mysql container" {
-        database MySqlDB
+    node "mysql container\n(porta: MYSQL_LOCAL_PORT → 3306)" {
+        database "MySQL 8.4"
     }
 }
 
+node "Host Docker - api-gateway\n(repositório separado, porta 8082)" {
+    component "API Gateway\n(Spring Cloud Gateway)"
+}
+
+node "Host Docker - service-discovery\n(repositório separado, porta 8761)" {
+    component "Service Discovery\n(Eureka Server)"
+}
+
 "Navegador" --> Frontend : HTTP
-Frontend --> "API Gateway" : REST
+Frontend --> "API Gateway\n(Spring Cloud Gateway)" : REST / HTTP
 
-"API Gateway" --> "Service Discovery (Eureka)" : Resolve servicos
-"API Gateway" --> "Customer Service" : /api/v1/customer/**
-"API Gateway" --> "Order Service" : /api/v1/order/**
+"API Gateway\n(Spring Cloud Gateway)" --> "Service Discovery\n(Eureka Server)" : Resolve instâncias
+"API Gateway\n(Spring Cloud Gateway)" --> "Customer Service" : /api/v1/customer/**
+"API Gateway\n(Spring Cloud Gateway)" --> "Order Service" : /api/v1/order/**
 
-"Customer Service" --> "Service Discovery (Eureka)" : Registra
-"Order Service" --> "Service Discovery (Eureka)" : Registra
+"Customer Service" --> "Service Discovery\n(Eureka Server)" : Registra / renova
+"Order Service" --> "Service Discovery\n(Eureka Server)" : Registra / renova
 
-"Customer Service" --> MySqlDB : JDBC
-"Order Service" --> MySqlDB : JDBC
+"Customer Service" --> "MySQL 8.4" : JDBC
+"Order Service" --> "MySQL 8.4" : JDBC
 
-"Customer Service" --> RabbitMQ : Publica eventos
-RabbitMQ --> "Customer Service" : Entrega eventos
+"Customer Service" --> RabbitMQ : Publica customer.created / customer.deleted
+RabbitMQ --> "Customer Service" : Consome customer.queue.*
 
-"Order Service" --> RabbitMQ : Publica eventos
-RabbitMQ --> "Order Service" : Entrega eventos
+"Order Service" --> RabbitMQ : Publica order.created / order.deleted
+RabbitMQ --> "Order Service" : Consome order.queue.*
 
-"Customer Service" --> "Order Service" : OpenFeign
+"Customer Service" --> "Order Service" : OpenFeign\nDELETE /api/v1/order/customer/{id}
+
+note bottom of "Host Docker - api-gateway\n(repositório separado, porta 8082)"
+    Executado separadamente a partir
+    do repositório spring-cloud-gateway.
+end note
+
+note bottom of "Host Docker - service-discovery\n(repositório separado, porta 8761)"
+    Executado separadamente a partir
+    do repositório eureka-server.
+end note
 
 @enduml

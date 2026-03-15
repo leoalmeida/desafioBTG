@@ -2,20 +2,21 @@
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
-title BTG - Diagrama de Contexto
+title BTG Desafio - Diagrama de Contexto (C4 Level 1)
 
-Person(user, "Usuario", "Cliente que gerencia clientes e pedidos")
+Person(user, "Usuário", "Acessa a plataforma via browser para gerenciar clientes e pedidos")
 
-System(system, "Plataforma BTG", "Aplicacao full stack para clientes e pedidos")
+System_Boundary(btg, "Plataforma BTG Desafio") {
+    System(system, "Aplicação BTG Desafio", "Plataforma full-stack com Frontend Angular,\nAPI Gateway, ms-customer, ms-order e mensageria")
+}
 
-System_Ext(mysql, "MySQL 8.4", "Persistencia de dados")
-System_Ext(rabbitmq, "RabbitMQ", "Broker AMQP")
-System_Ext(eureka, "Service Discovery", "Registro e descoberta de servicos")
+System_Ext(mysql, "MySQL 8.4", "Banco de dados relacional.\nPersistência de clientes, pedidos e itens.")
+System_Ext(rabbitmq, "RabbitMQ 3", "Message broker AMQP.\nComunicação assíncrona entre microserviços.")
+System_Ext(dockerhub, "Docker Hub", "Registro de imagens Docker.\nPublicado via CI/CD (GitHub Actions).")
 
-Rel(user, system, "Usa", "HTTPS")
-
-Rel(system, mysql, "Armazena dados")
-Rel(system, rabbitmq, "Publica e consome eventos")
-Rel(system, eureka, "Registro e descoberta de servicos")
+Rel(user, system, "Usa", "HTTP / HTTPS")
+Rel(system, mysql, "Persiste e consulta dados", "JDBC / JPA")
+Rel(system, rabbitmq, "Publica e consome eventos", "AMQP")
+Rel(system, dockerhub, "Publica imagens", "CI/CD")
 
 @enduml
