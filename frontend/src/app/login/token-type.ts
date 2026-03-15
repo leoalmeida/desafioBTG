@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 @Injectable()
 export class TokenType {
   id = 0;
-  sub = '';
-  username = '';
+  sub = "";
+  username = "";
   roles: string[] = [];
   permissions: string[] = [];
   iat = 123;

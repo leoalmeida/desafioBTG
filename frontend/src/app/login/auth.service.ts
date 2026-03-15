@@ -1,55 +1,54 @@
-import { UserType } from 'src/app/users/user-type';
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { TokenStorageService } from '../services/token-storage.service';
+import { UserType } from "src/app/users/user-type";
+import { HttpClient } from "@angular/common/http";
+import { inject, Injectable, signal } from "@angular/core";
+import { environment } from "../../environments/environment";
+import { BehaviorSubject, Observable } from "rxjs";
+import { TokenStorageService } from "../services/token-storage.service";
 
 const users: UserType[] = [
   {
     id: 1,
-    email: 'jrrtolk@teste.com',
-    nome: 'J.R.R. Tolkien',
-    telefone: '99999',
-    username: 'jrrtolk',
+    email: "jrrtolk@teste.com",
+    nome: "J.R.R. Tolkien",
+    telefone: "99999",
+    username: "jrrtolk",
     accessToken:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic3ViIjoiMzIzMjEyMTIxIiwidXNlcm5hbWUiOiJqcnJ0b2xrIiwiaWF0IjoxNTE2MjM5MDIyLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sInBlcm1pc3Npb25zIjpbIlJFQUQiLCJXUklURSJdLCJleHAiOjF9.8sJuOv7jrls5DJOIR2ReuKoBHpl8ffvD1gTYbJEv30Q',
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic3ViIjoiMzIzMjEyMTIxIiwidXNlcm5hbWUiOiJqcnJ0b2xrIiwiaWF0IjoxNTE2MjM5MDIyLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sInBlcm1pc3Npb25zIjpbIlJFQUQiLCJXUklURSJdLCJleHAiOjF9.8sJuOv7jrls5DJOIR2ReuKoBHpl8ffvD1gTYbJEv30Q",
     stats: [
-      { title: 'Benefícios Ativos', value: 5 },
-      { title: 'Benefícios Cancelados', value: 2 },
-      { title: 'Benefícios Pendentes', value: 1 },
+      { title: "Benefícios Ativos", value: 5 },
+      { title: "Benefícios Cancelados", value: 2 },
+      { title: "Benefícios Pendentes", value: 1 },
     ],
     logs: [
-      'Usuário jrrtolk fez login.',
+      "Usuário jrrtolk fez login.",
       "Usuário jrrtolk visualizou o benefício 'Plano de Saúde'.",
     ],
   },
   {
     id: 5,
-    email: 'teste1@teste.com',
-    nome: 'Teste Gibson',
-    telefone: '333333',
-    username: 'teste',
+    email: "teste1@teste.com",
+    nome: "Teste Gibson",
+    telefone: "333333",
+    username: "teste",
     accessToken:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IldpbGxpYW0gR2lic29uIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwiaWQiOjQsInVzZXJuYW1lIjoid2lsbGlhbkB0ZXN0ZS5jb20iLCJyb2xlcyI6WyJVU0VSIl0sInBlcm1pc3Npb25zIjpbIkZVTEwiXX0.5tPzsrO8KeIljFC64tItjIa1EasQlb5lwtmAnu4esCc',
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IldpbGxpYW0gR2lic29uIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwiaWQiOjQsInVzZXJuYW1lIjoid2lsbGlhbkB0ZXN0ZS5jb20iLCJyb2xlcyI6WyJVU0VSIl0sInBlcm1pc3Npb25zIjpbIkZVTEwiXX0.5tPzsrO8KeIljFC64tItjIa1EasQlb5lwtmAnu4esCc",
     stats: [
-      { title: 'Benefícios Ativos', value: 2 },
-      { title: 'Benefícios Cancelados', value: 3 },
-      { title: 'Benefícios Pendentes', value: 0 },
+      { title: "Benefícios Ativos", value: 2 },
+      { title: "Benefícios Cancelados", value: 3 },
+      { title: "Benefícios Pendentes", value: 0 },
     ],
     logs: [
-      'Usuário william fez login.',
+      "Usuário william fez login.",
       "Usuário william visualizou o benefício 'Plano de Saúde'.",
     ],
-  }
+  },
 ];
 
-
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthService {
-  private baseUrl = '';
+  private baseUrl = "";
   private http: HttpClient = inject(HttpClient);
   private apiData = [...users];
   private userList = signal<UserType[]>([]);
@@ -68,7 +67,7 @@ export class AuthService {
   items = this.userList.asReadonly();
 
   constructor() {
-    this.baseUrl = environment.authApi || '/api/v1/auth'; // Default to a fallback URL if not define
+    this.baseUrl = environment.authApi || "/api/v1/auth"; // Default to a fallback URL if not define
     this.mockHttpCall<any>(this.apiData).subscribe((xs) =>
       this.userList.set(xs),
     );
@@ -77,20 +76,16 @@ export class AuthService {
   login(username: string, password: string): Observable<UserType> {
     void password;
     //return this.http.post<any>(`${this.baseUrl}/signin`, { username, password }, httpOptions);
-    const user = this.userList().find(
-      (user) => user.username === username,
-    );
+    const user = this.userList().find((user) => user.username === username);
     if (user) {
-      this.mockHttpCall<UserType>(user).subscribe(
-        (logged: UserType) => {
-          this.loggedUser.next(logged);
-          this.tokenStorageService.saveJsonWebToken(logged);
-        },
-      );
+      this.mockHttpCall<UserType>(user).subscribe((logged: UserType) => {
+        this.loggedUser.next(logged);
+        this.tokenStorageService.saveJsonWebToken(logged);
+      });
       return this.loggedUser.asObservable();
     } else {
       return new Observable<UserType>((s) => {
-        s.error(new Error('Usuário ou senha inválidos'));
+        s.error(new Error("Usuário ou senha inválidos"));
         s.complete();
       });
     }
@@ -115,7 +110,7 @@ export class AuthService {
       nome: nome,
       username: username,
       telefone: telefone, // Placeholder, as telefone is not provided in the mock
-      accessToken: 'abc123',
+      accessToken: "abc123",
       stats: [],
       logs: [],
     };

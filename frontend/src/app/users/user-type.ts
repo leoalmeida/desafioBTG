@@ -1,4 +1,4 @@
-import { TokenType } from '../login/token-type';
+import { TokenType } from "../login/token-type";
 
 export interface UserType {
   id: number;

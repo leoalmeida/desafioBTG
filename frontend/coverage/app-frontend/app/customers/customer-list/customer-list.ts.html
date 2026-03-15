@@ -144,7 +144,9 @@
 <a name='L79'></a><a href='#L79'>79</a>
 <a name='L80'></a><a href='#L80'>80</a>
 <a name='L81'></a><a href='#L81'>81</a>
-<a name='L82'></a><a href='#L82'>82</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -203,7 +205,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -225,23 +229,23 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { MatButtonModule } from '@angular/material/button';
-import { Component, computed, inject, signal } from '@angular/core';
-import { CustomerService } from '../customer.service';
-import { LoadingService } from '../../core/loading-indicator/loading.service';
-import { TokenStorageService } from '../../services/token-storage.service';
-import { CustomerCard } from '../customer-card/customer-card';
-import { Searchbar } from '../../core/searchbar/searchbar';
-import { CustomerDetails } from '../customer-details/customer-details';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { UserType } from 'src/app/users/user-type';
-import { NotificationService } from 'src/app/services/notification.service';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { CustomerType } from '../customer-type';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { MatButtonModule } from "@angular/material/button";
+import { Component, computed, inject, signal } from "@angular/core";
+import { CustomerService } from "../customer.service";
+import { LoadingService } from "../../core/loading-indicator/loading.service";
+import { TokenStorageService } from "../../services/token-storage.service";
+import { CustomerCard } from "../customer-card/customer-card";
+import { Searchbar } from "../../core/searchbar/searchbar";
+import { CustomerDetails } from "../customer-details/customer-details";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { UserType } from "src/app/users/user-type";
+import { NotificationService } from "src/app/services/notification.service";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { CustomerType } from "../customer-type";
 &nbsp;
 @Component({
-  selector: 'app-customer-list',
+  selector: "app-customer-list",
   standalone: true,
   imports: [
     CustomerCard,
@@ -251,12 +255,12 @@ import { CustomerType } from '../customer-type';
     MatIconModule,
     MatSlideToggleModule,
   ],
-  templateUrl: './customer-list.html',
-  styleUrls: ['./customer-list.css'],
+  templateUrl: "./customer-list.html",
+  styleUrls: ["./customer-list.css"],
 })
 export class CustomerList {
   protected loggedUser = signal({} as UserType);
-  searchQuery = signal&lt;string&gt;('');
+  searchQuery = signal&lt;string&gt;("");
 &nbsp;
   private customerService: CustomerService = inject(CustomerService);
   private loadingService: LoadingService = inject(LoadingService);
@@ -271,22 +275,24 @@ export class CustomerList {
         this.loggedUser.set(user);
       });
     } catch (error: any) {
-<span class="cstat-no" title="statement not covered" >      this.notify.showError(error.message || 'Erro ao identificar usuário.');</span>
-    } 
+<span class="cstat-no" title="statement not covered" >      this.notify.showError(error.message || "Erro ao identificar usuário.");</span>
+    }
   }
 &nbsp;
   filteredCustomerList = computed(() =&gt; {
     try {
       this.loadingService.loadingOn();
       const normalizedQuery = this.searchQuery()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase();
       return this.customerService
         .items()
-        .filter((x: CustomerType) =&gt; x?.name.toLowerCase().includes(normalizedQuery));
+        .filter((x: CustomerType) =&gt;
+          x?.name.toLowerCase().includes(normalizedQuery),
+        );
     } catch (error: any) {
-<span class="cstat-no" title="statement not covered" >      this.notify.showError(error.message || 'Erro ao filtrar benefícios.');</span>
+<span class="cstat-no" title="statement not covered" >      this.notify.showError(error.message || "Erro ao filtrar benefícios.");</span>
 <span class="cstat-no" title="statement not covered" >      return [];</span>
     } finally {
       this.loadingService.loadingOff();
@@ -299,7 +305,7 @@ export class CustomerList {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  onCreateCustomer(</span>): void {
     const dialogRef = <span class="cstat-no" title="statement not covered" >this.dialogAcao.open(CustomerDetails, {</span>
-      width: '500px',
+      width: "500px",
       data: {},
     });
     // Mantem o fluxo de fechamento sem side effects de log.
@@ -313,7 +319,7 @@ export class CustomerList {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-14T22:57:45.424Z
+                at 2026-03-15T00:06:50.526Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

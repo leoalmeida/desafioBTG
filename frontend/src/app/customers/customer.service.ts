@@ -1,16 +1,16 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { CustomerType } from './customer-type';
-import { NotificationService } from '../services/notification.service';
-import { OrderType } from '../orders/order-type';
+import { inject, Injectable, signal } from "@angular/core";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { catchError, map, Observable, throwError } from "rxjs";
+import { environment } from "../../environments/environment";
+import { CustomerType } from "./customer-type";
+import { NotificationService } from "../services/notification.service";
+import { OrderType } from "../orders/order-type";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class CustomerService {
-  private baseUrl = '/api/v1/customer';
+  private baseUrl = "/api/v1/customer";
   private customersList = signal<CustomerType[]>([]);
 
   private http: HttpClient = inject(HttpClient);
@@ -99,32 +99,25 @@ export class CustomerService {
 
   //DELETE - "/{id}
   removerCustomer(idCustomer: number): void {
-    this.http
-      .delete<void>(
-        `${this.baseUrl}/${idCustomer}`,
-        {},
-      )
-      .subscribe({
-        next: () => {
-          const lista = this.customersList();
-          const removed = lista.findIndex((x) => x.id === idCustomer)
-          if (removed > -1) {
-            lista.splice(removed, 1);
-            this.customersList.set([...lista]); // Atualiza a signal para refletir as mudanças
-          
-            this.notify.showSuccess(
-              `Cliente removido com sucesso.`,
-            );
-            return true
-          }
-          return false;
-        },
-        error: (error) => this.handleError(error),
-      });
+    this.http.delete<void>(`${this.baseUrl}/${idCustomer}`, {}).subscribe({
+      next: () => {
+        const lista = this.customersList();
+        const removed = lista.findIndex((x) => x.id === idCustomer);
+        if (removed > -1) {
+          lista.splice(removed, 1);
+          this.customersList.set([...lista]); // Atualiza a signal para refletir as mudanças
+
+          this.notify.showSuccess(`Cliente removido com sucesso.`);
+          return true;
+        }
+        return false;
+      },
+      error: (error) => this.handleError(error),
+    });
   }
 
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Erro desconhecido';
+    let errorMessage = "Erro desconhecido";
 
     if (error.error instanceof ErrorEvent) {
       // Erro do lado do cliente

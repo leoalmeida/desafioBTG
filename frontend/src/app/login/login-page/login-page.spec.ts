@@ -1,24 +1,24 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LoginPage } from './login-page';
-import { AuthService } from '../auth.service';
-import { TokenStorageService } from '../../services/token-storage.service';
-import { Router } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
-import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { LoginPage } from "./login-page";
+import { AuthService } from "../auth.service";
+import { TokenStorageService } from "../../services/token-storage.service";
+import { Router } from "@angular/router";
+import { ReactiveFormsModule } from "@angular/forms";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { of } from "rxjs";
+import { createSpyObj, SpyObj } from "../../../test-helpers/spy-utils";
 
-describe('LoginPage', () => {
+describe("LoginPage", () => {
   let component: LoginPage;
   let fixture: ComponentFixture<LoginPage>;
-  let authServiceSpy: SpyObj<AuthService, 'login'>;
-  let tokenStorageSpy: SpyObj<TokenStorageService, 'isAuthenticated'>;
-  let routerSpy: SpyObj<Router, 'navigate'>;
+  let authServiceSpy: SpyObj<AuthService, "login">;
+  let tokenStorageSpy: SpyObj<TokenStorageService, "isAuthenticated">;
+  let routerSpy: SpyObj<Router, "navigate">;
 
   beforeEach(async () => {
-    authServiceSpy = createSpyObj<AuthService>(['login']);
-    tokenStorageSpy = createSpyObj<TokenStorageService>(['isAuthenticated']);
-    routerSpy = createSpyObj<Router>(['navigate']);
+    authServiceSpy = createSpyObj<AuthService>(["login"]);
+    tokenStorageSpy = createSpyObj<TokenStorageService>(["isAuthenticated"]);
+    routerSpy = createSpyObj<Router>(["navigate"]);
 
     tokenStorageSpy.isAuthenticated.mockReturnValue(false);
 
@@ -36,49 +36,49 @@ describe('LoginPage', () => {
     fixture.detectChanges();
   });
 
-  it('deve criar o componente', () => {
+  it("deve criar o componente", () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve inicializar o formulário vazio e inválido', () => {
+  it("deve inicializar o formulário vazio e inválido", () => {
     expect(component.formLogin.valid).toBe(false);
-    expect(component.formLogin.value).toEqual({ username: '', password: '' });
+    expect(component.formLogin.value).toEqual({ username: "", password: "" });
   });
 
-  it('deve validar campos obrigatórios', () => {
-    const usernameControl = component.formLogin.get('username');
-    const passwordControl = component.formLogin.get('password');
+  it("deve validar campos obrigatórios", () => {
+    const usernameControl = component.formLogin.get("username");
+    const passwordControl = component.formLogin.get("password");
 
-    usernameControl?.setValue('');
-    passwordControl?.setValue('');
+    usernameControl?.setValue("");
+    passwordControl?.setValue("");
 
-    expect(usernameControl?.errors?.['required']).toBeTruthy();
-    expect(passwordControl?.errors?.['required']).toBeTruthy();
+    expect(usernameControl?.errors?.["required"]).toBeTruthy();
+    expect(passwordControl?.errors?.["required"]).toBeTruthy();
   });
 
-  it('deve chamar o serviço de login e navegar se bem-sucedido', () => {
-    const mockUser = { id: 1, nome: 'Teste', username: 'teste' };
+  it("deve chamar o serviço de login e navegar se bem-sucedido", () => {
+    const mockUser = { id: 1, nome: "Teste", username: "teste" };
     authServiceSpy.login.mockReturnValue(of(mockUser as any));
 
-    component.formLogin.setValue({ username: 'user', password: '123' });
+    component.formLogin.setValue({ username: "user", password: "123" });
     component.onSubmit();
 
-    expect(authServiceSpy.login).toHaveBeenCalledWith('user', '123');
+    expect(authServiceSpy.login).toHaveBeenCalledWith("user", "123");
   });
 
-  it('não deve chamar o serviço de login se o formulário for inválido', () => {
-    component.formLogin.setValue({ username: '', password: '' });
+  it("não deve chamar o serviço de login se o formulário for inválido", () => {
+    component.formLogin.setValue({ username: "", password: "" });
     component.onSubmit();
     expect(authServiceSpy.login).not.toHaveBeenCalled();
   });
 
-  it('deve redirecionar no ngOnInit se já estiver autenticado', () => {
+  it("deve redirecionar no ngOnInit se já estiver autenticado", () => {
     tokenStorageSpy.isAuthenticated.mockReturnValue(true);
     component.ngOnInit();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['customers']);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(["customers"]);
   });
 
-  it('deve atualizar isLoggedIn no reloadPage quando não autenticado', () => {
+  it("deve atualizar isLoggedIn no reloadPage quando não autenticado", () => {
     tokenStorageSpy.isAuthenticated.mockReturnValue(false);
 
     component.reloadPage();

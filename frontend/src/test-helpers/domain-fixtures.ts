@@ -1,22 +1,26 @@
-import { CustomerType } from '../app/customers/customer-type';
-import { OrderItemType, OrderType } from '../app/orders/order-type';
-import { UserType } from '../app/users/user-type';
+import { CustomerType } from "../app/customers/customer-type";
+import { OrderItemType, OrderType } from "../app/orders/order-type";
+import { UserType } from "../app/users/user-type";
 
-export function makeCustomer(overrides: Partial<CustomerType> = {}): CustomerType {
+export function makeCustomer(
+  overrides: Partial<CustomerType> = {},
+): CustomerType {
   return {
     id: 1,
-    name: 'Cliente Teste',
-    email: 'cliente@example.com',
-    phone: '11999999999',
+    name: "Cliente Teste",
+    email: "cliente@example.com",
+    phone: "11999999999",
     ativo: true,
     ...overrides,
   };
 }
 
-export function makeOrderItem(overrides: Partial<OrderItemType> = {}): OrderItemType {
+export function makeOrderItem(
+  overrides: Partial<OrderItemType> = {},
+): OrderItemType {
   return {
     id: 1,
-    productName: 'Produto Teste',
+    productName: "Produto Teste",
     quantity: 1,
     price: 10,
     ...overrides,
@@ -36,10 +40,10 @@ export function makeOrder(overrides: Partial<OrderType> = {}): OrderType {
 export function makeUser(overrides: Partial<UserType> = {}): UserType {
   return {
     id: 1,
-    email: 'user@test.com',
-    nome: 'Usuario Teste',
-    telefone: '11999990000',
-    username: 'user',
+    email: "user@test.com",
+    nome: "Usuario Teste",
+    telefone: "11999990000",
+    username: "user",
     stats: [],
     logs: [],
     ...overrides,

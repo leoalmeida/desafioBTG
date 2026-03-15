@@ -1,16 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { OrderCard } from './order-card';
-import { OrderService } from '../order.service';
-import { NotificationService } from 'src/app/services/notification.service';
-import { MatDialogModule } from '@angular/material/dialog';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { TemplateRef } from '@angular/core';
-import { OrderType } from '../order-type';
-import { of } from 'rxjs';
-import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
-import { makeOrder } from '../../../test-helpers/domain-fixtures';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { OrderCard } from "./order-card";
+import { OrderService } from "../order.service";
+import { NotificationService } from "src/app/services/notification.service";
+import { MatDialogModule } from "@angular/material/dialog";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { TemplateRef } from "@angular/core";
+import { OrderType } from "../order-type";
+import { of } from "rxjs";
+import { createSpyObj, SpyObj } from "../../../test-helpers/spy-utils";
+import { makeOrder } from "../../../test-helpers/domain-fixtures";
 
-describe('OrderCard', () => {
+describe("OrderCard", () => {
   let component: OrderCard;
   let fixture: ComponentFixture<OrderCard>;
   let orderServiceSpy: SpyObj<OrderService>;
@@ -23,15 +23,15 @@ describe('OrderCard', () => {
 
   beforeEach(async () => {
     orderServiceSpy = createSpyObj<OrderService>([
-      'changeOne',
-      'createOne',
-      'removeOne',
+      "changeOne",
+      "createOne",
+      "removeOne",
     ]);
     (orderServiceSpy.changeOne as any).mockReturnValue(of(true));
     (orderServiceSpy.createOne as any).mockReturnValue(of(true));
     notificationServiceSpy = createSpyObj<NotificationService>([
-      'showSuccess',
-      'showError',
+      "showSuccess",
+      "showError",
     ]);
 
     await TestBed.configureTestingModule({
@@ -50,22 +50,22 @@ describe('OrderCard', () => {
     (component as any).dialogAcao = { open: dialogOpenSpy };
 
     // Set required input
-    fixture.componentRef.setInput('order', mockOrder);
+    fixture.componentRef.setInput("order", mockOrder);
     fixture.detectChanges();
   });
 
-  it('deve criar o componente', () => {
+  it("deve criar o componente", () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve salvar pedido existente com changeOne', () => {
+  it("deve salvar pedido existente com changeOne", () => {
     component.onSaveOrder({} as TemplateRef<any>);
 
     expect(dialogOpenSpy).toHaveBeenCalled();
     expect(orderServiceSpy.changeOne).toHaveBeenCalledWith(mockOrder);
   });
 
-  it('deve remover pedido quando confirmado', () => {
+  it("deve remover pedido quando confirmado", () => {
     component.onRemoveOrder({} as TemplateRef<any>);
 
     expect(dialogOpenSpy).toHaveBeenCalled();

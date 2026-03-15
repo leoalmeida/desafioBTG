@@ -201,14 +201,7 @@
 <a name='L136'></a><a href='#L136'>136</a>
 <a name='L137'></a><a href='#L137'>137</a>
 <a name='L138'></a><a href='#L138'>138</a>
-<a name='L139'></a><a href='#L139'>139</a>
-<a name='L140'></a><a href='#L140'>140</a>
-<a name='L141'></a><a href='#L141'>141</a>
-<a name='L142'></a><a href='#L142'>142</a>
-<a name='L143'></a><a href='#L143'>143</a>
-<a name='L144'></a><a href='#L144'>144</a>
-<a name='L145'></a><a href='#L145'>145</a>
-<a name='L146'></a><a href='#L146'>146</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L139'></a><a href='#L139'>139</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -311,11 +304,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -323,8 +311,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -353,19 +339,19 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { CustomerType } from './customer-type';
-import { NotificationService } from '../services/notification.service';
-import { OrderType } from '../orders/order-type';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { inject, Injectable, signal } from "@angular/core";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { catchError, map, Observable, throwError } from "rxjs";
+import { environment } from "../../environments/environment";
+import { CustomerType } from "./customer-type";
+import { NotificationService } from "../services/notification.service";
+import { OrderType } from "../orders/order-type";
 &nbsp;
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class CustomerService {
-  private baseUrl = '/api/v1/customer';
+  private baseUrl = "/api/v1/customer";
   private customersList = signal&lt;CustomerType[]&gt;([]);
 &nbsp;
   private http: HttpClient = inject(HttpClient);
@@ -454,32 +440,25 @@ export class CustomerService {
 &nbsp;
   //DELETE - "/{id}
   removerCustomer(idCustomer: number): void {
-    this.http
-      .delete&lt;void&gt;(
-        `${this.baseUrl}/${idCustomer}`,
-        {},
-      )
-      .subscribe({
-        next: () =&gt; {
-          const lista = this.customersList();
-          const removed = lista.findIndex(<span class="fstat-no" title="function not covered" >(x</span>) =&gt; <span class="cstat-no" title="statement not covered" >x.id === idCustomer)</span>
-          <span class="missing-if-branch" title="if path not taken" >I</span>if (removed &gt; -1) {
-<span class="cstat-no" title="statement not covered" >            lista.splice(removed, 1);</span>
-<span class="cstat-no" title="statement not covered" >            this.customersList.set([...lista]); // Atualiza a signal para refletir as mudanças</span>
-          
-<span class="cstat-no" title="statement not covered" >            this.notify.showSuccess(</span>
-              `Cliente removido com sucesso.`,
-            );
-<span class="cstat-no" title="statement not covered" >            return true</span>
-          }
-          return false;
-        },
-        error: <span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; <span class="cstat-no" title="statement not covered" >this.handleError(error),</span>
-      });
+    this.http.delete&lt;void&gt;(`${this.baseUrl}/${idCustomer}`, {}).subscribe({
+      next: () =&gt; {
+        const lista = this.customersList();
+        const removed = lista.findIndex(<span class="fstat-no" title="function not covered" >(x</span>) =&gt; <span class="cstat-no" title="statement not covered" >x.id === idCustomer)</span>;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (removed &gt; -1) {
+<span class="cstat-no" title="statement not covered" >          lista.splice(removed, 1);</span>
+<span class="cstat-no" title="statement not covered" >          this.customersList.set([...lista]); // Atualiza a signal para refletir as mudanças</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          this.notify.showSuccess(`Cliente removido com sucesso.`);</span>
+<span class="cstat-no" title="statement not covered" >          return true;</span>
+        }
+        return false;
+      },
+      error: <span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; <span class="cstat-no" title="statement not covered" >this.handleError(error),</span>
+    });
   }
 &nbsp;
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Erro desconhecido';
+    let errorMessage = "Erro desconhecido";
 &nbsp;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (error.error instanceof ErrorEvent) {
       // Erro do lado do cliente
@@ -505,7 +484,7 @@ export class CustomerService {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-14T22:57:45.424Z
+                at 2026-03-15T00:06:50.526Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

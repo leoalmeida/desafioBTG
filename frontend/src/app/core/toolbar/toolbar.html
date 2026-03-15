@@ -27,14 +27,16 @@
         }
       </mat-select>
       <ul class="nav-links">
-        <a matButton="tonal" class="link-item" 
+        <a
+          matButton="tonal"
+          class="link-item"
           (click)="onCreateOrder()"
-          [disabled]="selectedCustomerId < 0">
+          [disabled]="selectedCustomerId < 0"
+        >
           <mat-icon>add_shopping_cart</mat-icon>
           Novo Pedido
         </a>
-        <a matButton="tonal" class="link-item" 
-          (click)="onCreateCustomer()">
+        <a matButton="tonal" class="link-item" (click)="onCreateCustomer()">
           <mat-icon>person_add</mat-icon>
           Novo Cliente
         </a>

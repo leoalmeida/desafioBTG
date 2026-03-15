@@ -191,23 +191,25 @@
 <a name='L126'></a><a href='#L126'>126</a>
 <a name='L127'></a><a href='#L127'>127</a>
 <a name='L128'></a><a href='#L128'>128</a>
-<a name='L129'></a><a href='#L129'>129</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -259,6 +261,8 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -319,31 +323,31 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { MatButtonModule } from '@angular/material/button';
-import { Component, inject, signal, AfterViewInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { TokenStorageService } from '../../services/token-storage.service';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { UserType } from 'src/app/users/user-type';
-import { TitleService } from 'src/app/services/title.service';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { CustomerDetails } from '../../customers/customer-details/customer-details';
-import { NotificationService } from 'src/app/services/notification.service';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSelectModule } from '@angular/material/select';
-import { OrderService } from 'src/app/orders/order.service';
-import { CustomerService } from 'src/app/customers/customer.service';
-import { LoadingService } from '../loading-indicator/loading.service';
-import { FormsModule } from '@angular/forms';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { MatButtonModule } from "@angular/material/button";
+import { Component, inject, signal, AfterViewInit } from "@angular/core";
+import { Router, RouterLink } from "@angular/router";
+import { TokenStorageService } from "../../services/token-storage.service";
+import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatIconModule } from "@angular/material/icon";
+import { UserType } from "src/app/users/user-type";
+import { TitleService } from "src/app/services/title.service";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { CustomerDetails } from "../../customers/customer-details/customer-details";
+import { NotificationService } from "src/app/services/notification.service";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatSelectModule } from "@angular/material/select";
+import { OrderService } from "src/app/orders/order.service";
+import { CustomerService } from "src/app/customers/customer.service";
+import { LoadingService } from "../loading-indicator/loading.service";
+import { FormsModule } from "@angular/forms";
 &nbsp;
 interface RouteInfo {
   path: string;
   descricao: string;
 }
 @Component({
-  selector: 'app-toolbar',
+  selector: "app-toolbar",
   standalone: true,
   imports: [
     FormsModule,
@@ -354,13 +358,13 @@ interface RouteInfo {
     MatIconModule,
     RouterLink,
     MatSnackBarModule,
-    MatSelectModule
+    MatSelectModule,
   ],
-  templateUrl: './toolbar.html',
-  styleUrls: ['./toolbar.css'],
+  templateUrl: "./toolbar.html",
+  styleUrls: ["./toolbar.css"],
 })
 export class Toolbar implements AfterViewInit {
-  title = signal&lt;string&gt;(''); // Inicializa o título como uma string vazia
+  title = signal&lt;string&gt;(""); // Inicializa o título como uma string vazia
   routes: RouteInfo[] = [];
   opened = false;
   private tokenStorageService: TokenStorageService =
@@ -374,19 +378,21 @@ export class Toolbar implements AfterViewInit {
   private orderService: OrderService = inject(OrderService);
   private customerService: CustomerService = inject(CustomerService);
   private loadingService: LoadingService = inject(LoadingService);
-  
+&nbsp;
   customers = this.customerService.items();
-  selectedCustomerId: number = -1;
+  selectedCustomerId = -1;
   constructor() {
     this.tokenStorageService.autenticado$.subscribe((isAuth) =&gt; {
       this.isLoggedIn.set(isAuth);
-      if (isAuth) {        
+      if (isAuth) {
         try {
           this.loadingService.loadingOn();
           this.customerService.getAll();
           this.orderService.getAll();
         } catch (error: any) {
-<span class="cstat-no" title="statement not covered" >          this.notify.showError(error.message || 'Erro ao identificar usuário.');</span>
+<span class="cstat-no" title="statement not covered" >          this.notify.showError(</span>
+            error.message || "Erro ao identificar usuário.",
+          );
         } finally {
           this.loadingService.loadingOff();
         }
@@ -406,20 +412,20 @@ export class Toolbar implements AfterViewInit {
     for (const route of routesConf) {
 <span class="cstat-no" title="statement not covered" >      if (route) {</span>
 <span class="cstat-no" title="statement not covered" >        if (</span>
-          route.path !== '**' &amp;&amp;
-          route.path !== 'login' &amp;&amp;
-          route.path !== 'acesso-negado'
+          route.path !== "**" &amp;&amp;
+          route.path !== "login" &amp;&amp;
+          route.path !== "acesso-negado"
         ) {
 <span class="cstat-no" title="statement not covered" >          this.routes.push({</span>
-            path: route.path || '',
-            descricao: route.data?.['title'] || '',
+            path: route.path || "",
+            descricao: route.data?.["title"] || "",
           });
         }
       }
     }
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  showMenu(</span>) { }
+<span class="fstat-no" title="function not covered" >  showMenu(</span>) {}
 &nbsp;
 <span class="fstat-no" title="function not covered" >  onCustomerSelected(c</span>ustomerId: number): void {
 <span class="cstat-no" title="statement not covered" >    this.selectedCustomerId = customerId;</span>
@@ -428,21 +434,21 @@ export class Toolbar implements AfterViewInit {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  onCreateOrder(</span>): void {
 <span class="cstat-no" title="statement not covered" >    if (this.selectedCustomerId &gt;= 0) {</span>
-      const order = <span class="cstat-no" title="statement not covered" >this.orderService.addOne(this.selectedCustomerId);</span>
+<span class="cstat-no" title="statement not covered" >      this.orderService.addOne(this.selectedCustomerId);</span>
     }
   }
 &nbsp;
 <span class="fstat-no" title="function not covered" >  onCreateCustomer(</span>): void {
     const refOpen = <span class="cstat-no" title="statement not covered" >this.dialogAcao.open(CustomerDetails, {</span>
-      width: '500px',
-      enterAnimationDuration: '0ms',
-      exitAnimationDuration: '0ms',
+      width: "500px",
+      enterAnimationDuration: "0ms",
+      exitAnimationDuration: "0ms",
       data: {},
     });
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    refOpen.afterClosed().subscribe(<span class="fstat-no" title="function not covered" >(r</span>esult) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      if (result) {</span>
-<span class="cstat-no" title="statement not covered" >        this.notify.showSuccess('Cliente criado com sucesso!');</span>
+<span class="cstat-no" title="statement not covered" >        this.notify.showSuccess("Cliente criado com sucesso!");</span>
       }
     });
   }
@@ -454,7 +460,7 @@ export class Toolbar implements AfterViewInit {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-14T22:57:45.424Z
+                at 2026-03-15T00:06:50.526Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -1,31 +1,31 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CustomerDetails } from './customer-details';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ReactiveFormsModule } from '@angular/forms';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { CustomerType } from '../customer-type';
-import { CustomerService } from '../customer.service';
-import { of } from 'rxjs';
-import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
-import { makeCustomer } from '../../../test-helpers/domain-fixtures';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { CustomerDetails } from "./customer-details";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { ReactiveFormsModule } from "@angular/forms";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { CustomerType } from "../customer-type";
+import { CustomerService } from "../customer.service";
+import { of } from "rxjs";
+import { createSpyObj, SpyObj } from "../../../test-helpers/spy-utils";
+import { makeCustomer } from "../../../test-helpers/domain-fixtures";
 
-describe('CustomerDetails', () => {
+describe("CustomerDetails", () => {
   let component: CustomerDetails;
   let fixture: ComponentFixture<CustomerDetails>;
-  let dialogRefSpy: SpyObj<MatDialogRef<CustomerDetails>, 'close'>;
-  let customerServiceSpy: SpyObj<CustomerService, 'createOne' | 'changeOne'>;
+  let dialogRefSpy: SpyObj<MatDialogRef<CustomerDetails>, "close">;
+  let customerServiceSpy: SpyObj<CustomerService, "createOne" | "changeOne">;
 
   const mockCustomer: CustomerType = makeCustomer({
     id: 1,
-    name: 'Cliente Teste',
+    name: "Cliente Teste",
     ativo: true,
   });
 
   beforeEach(async () => {
-    dialogRefSpy = createSpyObj<MatDialogRef<CustomerDetails>>(['close']);
+    dialogRefSpy = createSpyObj<MatDialogRef<CustomerDetails>>(["close"]);
     customerServiceSpy = createSpyObj<CustomerService>([
-      'createOne',
-      'changeOne',
+      "createOne",
+      "changeOne",
     ]);
     customerServiceSpy.changeOne.mockReturnValue(of(true));
     customerServiceSpy.createOne.mockReturnValue(of(true));
@@ -44,30 +44,30 @@ describe('CustomerDetails', () => {
     fixture.detectChanges();
   });
 
-  it('deve criar o componente', () => {
+  it("deve criar o componente", () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve inicializar o formulário com os dados recebidos via MAT_DIALOG_DATA', () => {
+  it("deve inicializar o formulário com os dados recebidos via MAT_DIALOG_DATA", () => {
     expect(component.formCustomer.value).toEqual({
-      nome: '',
-      descricao: '',
+      nome: "",
+      descricao: "",
       valor: 0,
       ativo: mockCustomer.ativo,
     });
   });
 
-  it('deve invalidar o formulário se campos obrigatórios estiverem vazios', () => {
-    component.formCustomer.controls['nome'].setValue('');
-    component.formCustomer.controls['valor'].setValue(null);
+  it("deve invalidar o formulário se campos obrigatórios estiverem vazios", () => {
+    component.formCustomer.controls["nome"].setValue("");
+    component.formCustomer.controls["valor"].setValue(null);
 
     expect(component.formCustomer.valid).toBe(false);
   });
 
-  it('deve fechar o diálogo com true ao chamar onSubmit se válido', () => {
+  it("deve fechar o diálogo com true ao chamar onSubmit se válido", () => {
     const updatedValue = {
-      nome: 'Novo Nome',
-      descricao: 'Nova Descrição',
+      nome: "Novo Nome",
+      descricao: "Nova Descrição",
       valor: 600,
       ativo: false,
     };
@@ -79,13 +79,13 @@ describe('CustomerDetails', () => {
     expect(dialogRefSpy.close).toHaveBeenCalledWith(true);
   });
 
-  it('não deve fechar o diálogo ao chamar onSubmit se o formulário for inválido', () => {
-    component.formCustomer.controls['nome'].setValue('');
+  it("não deve fechar o diálogo ao chamar onSubmit se o formulário for inválido", () => {
+    component.formCustomer.controls["nome"].setValue("");
     component.onSubmit();
     expect(dialogRefSpy.close).not.toHaveBeenCalled();
   });
 
-  it('deve fechar o diálogo sem dados ao chamar onCancel', () => {
+  it("deve fechar o diálogo sem dados ao chamar onCancel", () => {
     component.onCancel();
     expect(dialogRefSpy.close).toHaveBeenCalledWith();
   });
