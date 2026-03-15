@@ -12,11 +12,11 @@
 
 Backend coverage reports are generated with JaCoCo and published as artifacts in test jobs.
 
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F)
-![Angular](https://img.shields.io/badge/Angular-21-red)
-![MySQL](https://img.shields.io/badge/MySQL-8-4479A1)
-![RabbitMQ](https://img.shields.io/badge/RabbitMQ-AMQP-FF6600)
+![Java](https://img.shields.io/badge/Java-17-007396?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-AMQP-FF6600?logo=rabbitmq&logoColor=white)
 
 Full stack platform based on microservices with Angular frontend, API Gateway, Service Discovery, ms-customer and ms-order.
 
