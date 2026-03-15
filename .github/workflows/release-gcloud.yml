@@ -95,23 +95,3 @@ jobs:
       run: |
         sed -i "s|{{IMAGE_TAG}}|${{ steps.get_version.outputs.current_version }}|g" prod/deployment.yaml
         kubectl apply -f deployment.yaml
-
-  frontend-release:
-    if: github.event.pull_request.merged == true && github.base_ref == 'main'
-    name: Frontend Release to Google Cloud
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Node.js 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Build frontend and push to Google Cloud Storage
-        run: |
-          npm install
-          npm run build
-          gsutil cp -r build/* gs://your-gcs-bucket-name/ 

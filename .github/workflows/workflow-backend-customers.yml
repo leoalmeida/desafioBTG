@@ -108,13 +108,8 @@ jobs:
           path: ms-customer/target/*.jar
           retention-days: 1
 
-  #zap-scan:
-  #  needs: build-project
-  #  uses: ./.github/workflows/zapscan.yml
-  #  secrets: inherit
-  
   #docker:
-  #  needs: zap-scan
+  #  needs: build-customers
   #  uses: ./.github/workflows/docker.yml
   #  secrets: inherit
   
