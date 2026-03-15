@@ -1,10 +1,10 @@
-import { Injectable, signal } from '@angular/core';
-import { UserType } from '../users/user-type';
-import { BehaviorSubject } from 'rxjs';
-import { TokenType } from '../login/token-type';
+import { Injectable, signal } from "@angular/core";
+import { UserType } from "../users/user-type";
+import { BehaviorSubject } from "rxjs";
+import { TokenType } from "../login/token-type";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class TokenStorageService {
   private associado = new BehaviorSubject<UserType>({} as UserType);
@@ -28,7 +28,7 @@ export class TokenStorageService {
   public saveJsonWebToken(accessToken: UserType): void {
     if (accessToken.accessToken) {
       const userToken: TokenType = JSON.parse(
-        atob(accessToken.accessToken.split('.')[1]),
+        atob(accessToken.accessToken.split(".")[1]),
       );
 
       const associado: UserType = {
@@ -55,12 +55,12 @@ export class TokenStorageService {
   }
 
   public saveUser(user: UserType): void {
-    window.sessionStorage.removeItem('user'); // Clear previous user
-    window.sessionStorage.setItem('user', JSON.stringify(user));
+    window.sessionStorage.removeItem("user"); // Clear previous user
+    window.sessionStorage.setItem("user", JSON.stringify(user));
   }
 
   public getUser(): UserType {
-    const user = window.sessionStorage.getItem('user');
+    const user = window.sessionStorage.getItem("user");
     return user ? JSON.parse(user) : ({} as UserType);
   }
 }

@@ -10,11 +10,23 @@
       matBadgeSize="large"
       [matBadgeColor]="order().itemList.length > 0 ? 'primary' : 'accent'"
     ></div>
-    {{ order().id ? 'Pedido #' + order().id : 'Novo Pedido' }}
+    {{ order().id ? "Pedido #" + order().id : "Novo Pedido" }}
   </mat-card-title>
   <mat-card-content class="description">
-    @for(item of order().itemList; track item.id) {
-      <ul (click)="onUpdateOrderItem(item)">{{ item.productName }} - {{ item.quantity }} x {{ item.price | currency: "BRL" : "symbol" : "1.2-2" }}</ul>
+    @for (item of order().itemList; track item.id) {
+      <ul (click)="onUpdateOrderItem(item)">
+        {{
+          item.productName
+        }}
+        -
+        {{
+          item.quantity
+        }}
+        x
+        {{
+          item.price | currency: "BRL" : "symbol" : "1.2-2"
+        }}
+      </ul>
     }
   </mat-card-content>
   <mat-card-subtitle class="category">

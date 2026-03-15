@@ -1,26 +1,47 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 
-const coverageFile = path.resolve('coverage', 'app-frontend', 'coverage-final.json');
+const coverageFile = path.resolve(
+  "coverage",
+  "app-frontend",
+  "coverage-final.json",
+);
 
 const thresholds = {
   global: { statements: 70, branches: 70, functions: 60, lines: 75 },
-  'src/app/core': { statements: 82, branches: 78, functions: 69, lines: 82 },
-  'src/app/services': { statements: 69, branches: 76, functions: 66, lines: 69 },
-  'src/app/customers': { statements: 76, branches: 65, functions: 66, lines: 78 },
-  'src/app/orders': { statements: 71, branches: 63, functions: 61, lines: 71 },
+  "src/app/core": { statements: 82, branches: 78, functions: 69, lines: 82 },
+  "src/app/services": {
+    statements: 69,
+    branches: 76,
+    functions: 66,
+    lines: 69,
+  },
+  "src/app/customers": {
+    statements: 76,
+    branches: 65,
+    functions: 66,
+    lines: 78,
+  },
+  "src/app/orders": { statements: 71, branches: 63, functions: 61, lines: 71 },
 };
 
 function isCountableFile(filePath) {
-  return /\/src\/app\//.test(filePath.replace(/\\/g, '/')) && filePath.endsWith('.ts');
+  return (
+    /\/src\/app\//.test(filePath.replace(/\\/g, "/")) &&
+    filePath.endsWith(".ts")
+  );
 }
 
 function fileMetrics(entry) {
   const statementsTotal = Object.keys(entry.s ?? {}).length;
-  const statementsCovered = Object.values(entry.s ?? {}).filter((v) => v > 0).length;
+  const statementsCovered = Object.values(entry.s ?? {}).filter(
+    (v) => v > 0,
+  ).length;
 
   const functionsTotal = Object.keys(entry.f ?? {}).length;
-  const functionsCovered = Object.values(entry.f ?? {}).filter((v) => v > 0).length;
+  const functionsCovered = Object.values(entry.f ?? {}).filter(
+    (v) => v > 0,
+  ).length;
 
   const branchTotals = Object.values(entry.b ?? {}).flat();
   const branchesTotal = branchTotals.length;
@@ -91,23 +112,32 @@ if (!fs.existsSync(coverageFile)) {
   process.exit(1);
 }
 
-const rawCoverage = JSON.parse(fs.readFileSync(coverageFile, 'utf-8'));
+const rawCoverage = JSON.parse(fs.readFileSync(coverageFile, "utf-8"));
 const entries = Object.entries(rawCoverage)
-  .map(([filePath, entry]) => ({ filePath: filePath.replace(/\\/g, '/'), entry }))
+  .map(([filePath, entry]) => ({
+    filePath: filePath.replace(/\\/g, "/"),
+    entry,
+  }))
   .filter(({ filePath }) => isCountableFile(filePath));
 
 if (!entries.length) {
-  console.error('No countable TS files found in coverage report.');
+  console.error("No countable TS files found in coverage report.");
   process.exit(1);
 }
 
-const globalMetrics = sumMetrics(entries.map(({ entry }) => fileMetrics(entry)));
-const globalEvaluation = evaluateScope('global', globalMetrics, thresholds.global);
+const globalMetrics = sumMetrics(
+  entries.map(({ entry }) => fileMetrics(entry)),
+);
+const globalEvaluation = evaluateScope(
+  "global",
+  globalMetrics,
+  thresholds.global,
+);
 
 const allFailures = [...globalEvaluation.failures];
 
 for (const [scope, scopeThresholds] of Object.entries(thresholds)) {
-  if (scope === 'global') continue;
+  if (scope === "global") continue;
 
   const scopedEntries = entries
     .filter(({ filePath }) => filePath.includes(`/${scope}/`))
@@ -126,15 +156,17 @@ for (const [scope, scopeThresholds] of Object.entries(thresholds)) {
   allFailures.push(...scopeEvaluation.failures);
 }
 
-console.log('Coverage threshold check completed.');
-console.log(`Global coverage -> statements: ${globalEvaluation.result.statements}% | branches: ${globalEvaluation.result.branches}% | functions: ${globalEvaluation.result.functions}% | lines: ${globalEvaluation.result.lines}%`);
+console.log("Coverage threshold check completed.");
+console.log(
+  `Global coverage -> statements: ${globalEvaluation.result.statements}% | branches: ${globalEvaluation.result.branches}% | functions: ${globalEvaluation.result.functions}% | lines: ${globalEvaluation.result.lines}%`,
+);
 
 if (allFailures.length) {
-  console.error('Coverage thresholds failed:');
+  console.error("Coverage thresholds failed:");
   for (const failure of allFailures) {
     console.error(`- ${failure}`);
   }
   process.exit(1);
 }
 
-console.log('All coverage thresholds passed.');
+console.log("All coverage thresholds passed.");

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>16/16</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>15/15</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
@@ -127,10 +127,7 @@
 <a name='L62'></a><a href='#L62'>62</a>
 <a name='L63'></a><a href='#L63'>63</a>
 <a name='L64'></a><a href='#L64'>64</a>
-<a name='L65'></a><a href='#L65'>65</a>
-<a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L65'></a><a href='#L65'>65</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -142,8 +139,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -165,7 +160,7 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -193,28 +188,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { MatFormFieldModule } from '@angular/material/form-field';
-import { Component, inject } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { OrderItemType, OrderType } from '../order-type';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { MatFormFieldModule } from "@angular/material/form-field";
+import { Component, inject } from "@angular/core";
+import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
+import { OrderItemType } from "../order-type";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef,
-} from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { CommonModule } from '@angular/common';
-import { OrderService } from '../order.service';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+} from "@angular/material/dialog";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { CommonModule } from "@angular/common";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 &nbsp;
 @Component({
-  selector: 'app-order-item-details',
+  selector: "app-order-item-details",
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -224,26 +216,26 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatDialogModule,
     MatSlideToggleModule,
   ],
-  templateUrl: './order-item-details.html',
-  styleUrls: ['./order-item-details.css'],
+  templateUrl: "./order-item-details.html",
+  styleUrls: ["./order-item-details.css"],
 })
 export class OrderItemDetails {
   private formBuilder: FormBuilder = inject(FormBuilder);
   private dialogRef: MatDialogRef&lt;OrderItemDetails&gt; = inject(MatDialogRef);
   public data: OrderItemType = inject(MAT_DIALOG_DATA) as OrderItemType;
-  private orderService = inject(OrderService);
-  openType: 'create' | 'edit' = this.data &amp;&amp; this.data.id&gt;=0 ? 'edit' : <span class="branch-1 cbranch-no" title="branch not covered" >'create';</span>
+  openType: "create" | "edit" =
+    this.data &amp;&amp; this.data.id &gt;= 0 ? "edit" : <span class="branch-1 cbranch-no" title="branch not covered" >"create";</span>
 &nbsp;
   formOrderItem = this.formBuilder.group({
     id: [-1],
-    productName: ['', Validators.required],
+    productName: ["", Validators.required],
     quantity: [0, [Validators.required, Validators.min(1)]],
     price: [0.0, [Validators.required, Validators.min(0.01)]],
     ativo: [true],
   });
 &nbsp;
   constructor() {
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (this.openType === 'edit') {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (this.openType === "edit") {
       this.formOrderItem.patchValue(this.data);
     }
   }
@@ -254,9 +246,8 @@ export class OrderItemDetails {
         ...this.data,
         ...this.formOrderItem.value,
       } as OrderItemType;
-      
+&nbsp;
       this.dialogRef.close(orderItem);
-      
     }
   }
 &nbsp;
@@ -271,7 +262,7 @@ export class OrderItemDetails {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-14T22:57:45.424Z
+                at 2026-03-15T00:06:50.526Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

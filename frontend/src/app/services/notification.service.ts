@@ -1,13 +1,13 @@
-import { inject, Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { LoggerService } from './logger.service';
+import { inject, Injectable } from "@angular/core";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
+import { LoggerService } from "./logger.service";
 
 /** * Lógica centralizada para exibir snackbars.
  *    Facilita a personalização de estilos e padrões.
  *    Pode ser chamado de qualquer lugar no aplicativo.
  */
 @Injectable({
-  providedIn: 'root', // Makes the service available app-wide
+  providedIn: "root", // Makes the service available app-wide
 })
 export class NotificationService {
   private logger: LoggerService = inject(LoggerService);
@@ -21,12 +21,12 @@ export class NotificationService {
    * @param action - Texto opcional do botão de ação
    * @param config - Configuração opcional personalizada
    */
-  show(message: string, action = 'OK', config?: MatSnackBarConfig): void {
+  show(message: string, action = "OK", config?: MatSnackBarConfig): void {
     const defaultConfig: MatSnackBarConfig = {
       duration: 3000, // Auto close after 3 seconds
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: ['snackbar-default'], // Custom CSS class
+      horizontalPosition: "right",
+      verticalPosition: "top",
+      panelClass: ["snackbar-default"], // Custom CSS class
     };
 
     this.logger.log('Notificação ["INFO"]:', message);
@@ -39,7 +39,7 @@ export class NotificationService {
    */
   showError(message: string, config?: MatSnackBarConfig): void {
     this.logger.error('Notificação ["ERRO"]:', message);
-    this.show(message, 'Close', { panelClass: ['snackbar-error'], ...config });
+    this.show(message, "Close", { panelClass: ["snackbar-error"], ...config });
   }
 
   /**
@@ -48,8 +48,8 @@ export class NotificationService {
    */
   showWarning(message: string, config?: MatSnackBarConfig): void {
     this.logger.warn('Notificação ["AVISO"]:', message);
-    this.show(message, 'Close', {
-      panelClass: ['snackbar-warning'],
+    this.show(message, "Close", {
+      panelClass: ["snackbar-warning"],
       ...config,
     });
   }
@@ -60,8 +60,8 @@ export class NotificationService {
    */
   showSuccess(message: string, config?: MatSnackBarConfig): void {
     this.logger.log('Notificação ["SUCESSO"]:', message);
-    this.show(message, 'Close', {
-      panelClass: ['snackbar-success'],
+    this.show(message, "Close", {
+      panelClass: ["snackbar-success"],
       ...config,
     });
   }

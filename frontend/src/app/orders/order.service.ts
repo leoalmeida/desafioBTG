@@ -1,15 +1,15 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { OrderType } from './order-type';
-import { NotificationService } from '../services/notification.service';
+import { inject, Injectable, signal } from "@angular/core";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { catchError, map, Observable, throwError } from "rxjs";
+import { environment } from "../../environments/environment";
+import { OrderType } from "./order-type";
+import { NotificationService } from "../services/notification.service";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class OrderService {
-  private baseUrl = '/api/v1/orders';
+  private baseUrl = "/api/v1/orders";
   private ordersList = signal<OrderType[]>([]);
   private fullList = signal<OrderType[]>([]);
 
@@ -25,9 +25,12 @@ export class OrderService {
 
   addOne(customerId: number): void {
     const addedOrder: OrderType = {
-      id: this.ordersList().length > 0 ? Math.min(...this.ordersList().map(o => o.id)) - 1 : -1  ,
+      id:
+        this.ordersList().length > 0
+          ? Math.min(...this.ordersList().map((o) => o.id)) - 1
+          : -1,
       customerId: customerId,
-      totalPrice: 0.00,
+      totalPrice: 0.0,
       itemList: [],
     };
     const lista = this.ordersList();
@@ -49,9 +52,11 @@ export class OrderService {
 
   filterByCustomer(customerId: number): void {
     if (customerId >= 0) {
-      const filtered = this.fullList().filter((o) => o.customerId === customerId);
+      const filtered = this.fullList().filter(
+        (o) => o.customerId === customerId,
+      );
       this.ordersList.set(filtered);
-    }else{
+    } else {
       this.ordersList.set(this.fullList());
     }
   }
@@ -68,7 +73,7 @@ export class OrderService {
       error: (error) => this.handleError(error),
     });
   }
-  
+
   getAllAndReturn(): Observable<boolean> {
     return this.http.get<OrderType[]>(`${this.baseUrl}`).pipe(
       map((lista: OrderType[]) => {
@@ -107,49 +112,43 @@ export class OrderService {
 
   //PUT - "/{id}"
   changeOne(order: OrderType): Observable<boolean> {
-    return this.http
-      .put<OrderType>(`${this.baseUrl}/${order.id}`, order)
-      .pipe(
-        map((order) => {
-          if (!order) return false;
-          const lista = this.ordersList();
-          const changed = lista.find((x) => x.id === order.id);
-          if (changed) {
-            Object.assign(changed, order); // Atualiza o item na lista com os novos dados
-            this.ordersList.set([...lista]); // Atualiza a signal para refletir as mudanças
-          }
-          this.notify.showSuccess(
-            `Pedido atualizado com sucesso: ID: ${order.id}.`,
-          );
-          return true;
-        }),
-        catchError((error) => this.handleError(error)),
-      );
+    return this.http.put<OrderType>(`${this.baseUrl}/${order.id}`, order).pipe(
+      map((order) => {
+        if (!order) return false;
+        const lista = this.ordersList();
+        const changed = lista.find((x) => x.id === order.id);
+        if (changed) {
+          Object.assign(changed, order); // Atualiza o item na lista com os novos dados
+          this.ordersList.set([...lista]); // Atualiza a signal para refletir as mudanças
+        }
+        this.notify.showSuccess(
+          `Pedido atualizado com sucesso: ID: ${order.id}.`,
+        );
+        return true;
+      }),
+      catchError((error) => this.handleError(error)),
+    );
   }
 
   //DELETE - "/{id}"
   removeOrder(orderId: number): void {
-    this.http.delete<void>(
-        `${this.baseUrl}/${orderId}`,{},)
-      .subscribe({
-        next: () => {
-          const lista = this.ordersList();
-          const changed = lista.findIndex((x) => x.id === orderId);
-          if (changed > -1) {
-            lista.splice(changed, 1);
-            this.ordersList.set([...lista]); // Atualiza a signal para refletir as mudanças
-          }
-          this.notify.showSuccess(
-            `Pedido removido com sucesso.`,
-          );
-          return true;
-        },
-        error: (error) => this.handleError(error),
-      });
+    this.http.delete<void>(`${this.baseUrl}/${orderId}`, {}).subscribe({
+      next: () => {
+        const lista = this.ordersList();
+        const changed = lista.findIndex((x) => x.id === orderId);
+        if (changed > -1) {
+          lista.splice(changed, 1);
+          this.ordersList.set([...lista]); // Atualiza a signal para refletir as mudanças
+        }
+        this.notify.showSuccess(`Pedido removido com sucesso.`);
+        return true;
+      },
+      error: (error) => this.handleError(error),
+    });
   }
 
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Erro desconhecido';
+    let errorMessage = "Erro desconhecido";
 
     if (error.error instanceof ErrorEvent) {
       // Erro do lado do cliente

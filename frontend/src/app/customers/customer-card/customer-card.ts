@@ -1,21 +1,20 @@
-import { MatButtonModule } from '@angular/material/button';
-import { Component, inject, input, TemplateRef } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { CustomerType } from '../customer-type';
-import { CustomerService } from '../customer.service';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { FormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatDividerModule } from '@angular/material/divider';
-import { CustomerDetails } from '../customer-details/customer-details';
-import { MatIconModule } from '@angular/material/icon';
-import { NotificationService } from 'src/app/services/notification.service';
-import { CurrencyPipe } from '@angular/common';
-import { OrderService } from 'src/app/orders/order.service';
+import { MatButtonModule } from "@angular/material/button";
+import { Component, inject, input, TemplateRef } from "@angular/core";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { CustomerType } from "../customer-type";
+import { CustomerService } from "../customer.service";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { FormsModule } from "@angular/forms";
+import { MatCardModule } from "@angular/material/card";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatDividerModule } from "@angular/material/divider";
+import { CustomerDetails } from "../customer-details/customer-details";
+import { MatIconModule } from "@angular/material/icon";
+import { NotificationService } from "src/app/services/notification.service";
+import { OrderService } from "src/app/orders/order.service";
 
 @Component({
-  selector: 'app-customer-card',
+  selector: "app-customer-card",
   imports: [
     MatCardModule,
     MatDividerModule,
@@ -26,13 +25,13 @@ import { OrderService } from 'src/app/orders/order.service';
     MatBadgeModule,
     FormsModule,
   ],
-  templateUrl: './customer-card.html',
-  styleUrl: './customer-card.css',
+  templateUrl: "./customer-card.html",
+  styleUrl: "./customer-card.css",
 })
 export class CustomerCard {
   customer = input.required<CustomerType>();
   private customerService: CustomerService = inject(CustomerService);
-  message = '';
+  message = "";
 
   private dialogAcao: MatDialog = inject(MatDialog);
   private notify: NotificationService = inject(NotificationService);
@@ -46,14 +45,14 @@ export class CustomerCard {
 
   onUpdateCustomer(): void {
     const dialogRef = this.dialogAcao.open(CustomerDetails, {
-      width: '500px',
+      width: "500px",
       data: { ...this.customer() },
     });
 
     // Chama serviço para atualizar customer após fechamento do diálogo
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.notify.showSuccess('Atualização realizada com sucesso!');
+        this.notify.showSuccess("Atualização realizada com sucesso!");
       }
     });
   }
@@ -63,13 +62,13 @@ export class CustomerCard {
     event.preventDefault();
     event.stopPropagation();
     if (!this.customer().id) {
-      this.notify.showError('Nenhum cliente selecionado.');
+      this.notify.showError("Nenhum cliente selecionado.");
       return;
     }
     const refOpen = this.dialogAcao.open(dialogRef, {
-      width: '250px',
-      enterAnimationDuration: '0ms',
-      exitAnimationDuration: '0ms',
+      width: "250px",
+      enterAnimationDuration: "0ms",
+      exitAnimationDuration: "0ms",
       data: {
         message: `Tem certeza que deseja remover o cliente ${this.customer().name}?`,
       },
@@ -77,7 +76,7 @@ export class CustomerCard {
     refOpen.afterClosed().subscribe((result) => {
       if (result == true) {
         this.customerService.removerCustomer(this.customer().id);
-        this.notify.showSuccess('Cliente removido com sucesso!');
+        this.notify.showSuccess("Cliente removido com sucesso!");
       } else {
         this.customer().ativo = !this.customer().ativo;
       }

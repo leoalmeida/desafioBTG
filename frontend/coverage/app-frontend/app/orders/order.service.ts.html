@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72.36% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>55/76</span>
+                <span class='fraction'>55/77</span>
             </div>
         
             
@@ -232,8 +232,7 @@
 <a name='L167'></a><a href='#L167'>167</a>
 <a name='L168'></a><a href='#L168'>168</a>
 <a name='L169'></a><a href='#L169'>169</a>
-<a name='L170'></a><a href='#L170'>170</a>
-<a name='L171'></a><a href='#L171'>171</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L170'></a><a href='#L170'>170</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -260,7 +259,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -285,6 +287,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -344,8 +348,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -366,8 +368,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -375,8 +375,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -403,18 +401,18 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { OrderType } from './order-type';
-import { NotificationService } from '../services/notification.service';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { inject, Injectable, signal } from "@angular/core";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { catchError, map, Observable, throwError } from "rxjs";
+import { environment } from "../../environments/environment";
+import { OrderType } from "./order-type";
+import { NotificationService } from "../services/notification.service";
 &nbsp;
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class OrderService {
-  private baseUrl = '/api/v1/orders';
+  private baseUrl = "/api/v1/orders";
   private ordersList = signal&lt;OrderType[]&gt;([]);
   private fullList = signal&lt;OrderType[]&gt;([]);
 &nbsp;
@@ -430,9 +428,12 @@ export class OrderService {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  addOne(c</span>ustomerId: number): void {
     const addedOrder: OrderType = <span class="cstat-no" title="statement not covered" >{</span>
-      id: this.ordersList().length &gt; 0 ? Math.min(...this.ordersList().map(<span class="fstat-no" title="function not covered" >o =&gt; <span class="cstat-no" title="statement not covered" >o</span>.id)</span>) - 1 : -1  ,
+      id:
+        this.ordersList().length &gt; 0
+          ? Math.min(...this.ordersList().map(<span class="fstat-no" title="function not covered" >(o</span>) =&gt; <span class="cstat-no" title="statement not covered" >o.id)</span>) - 1
+          : -1,
       customerId: customerId,
-      totalPrice: 0.00,
+      totalPrice: 0.0,
       itemList: [],
     };
     const lista = <span class="cstat-no" title="statement not covered" >this.ordersList();</span>
@@ -454,9 +455,11 @@ export class OrderService {
 &nbsp;
 <span class="fstat-no" title="function not covered" >  filterByCustomer(c</span>ustomerId: number): void {
 <span class="cstat-no" title="statement not covered" >    if (customerId &gt;= 0) {</span>
-      const filtered = <span class="cstat-no" title="statement not covered" >this.fullList().filter(<span class="fstat-no" title="function not covered" >(o</span>) =&gt; <span class="cstat-no" title="statement not covered" >o.customerId === customerId)</span>;</span>
+      const filtered = <span class="cstat-no" title="statement not covered" >this.fullList().filter(</span>
+<span class="fstat-no" title="function not covered" >        (o</span>) =&gt; <span class="cstat-no" title="statement not covered" >o.customerId === customerId,</span>
+      );
 <span class="cstat-no" title="statement not covered" >      this.ordersList.set(filtered);</span>
-    }else{
+    } else {
 <span class="cstat-no" title="statement not covered" >      this.ordersList.set(this.fullList());</span>
     }
   }
@@ -473,7 +476,7 @@ export class OrderService {
       error: <span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; <span class="cstat-no" title="statement not covered" >this.handleError(error),</span>
     });
   }
-  
+&nbsp;
   getAllAndReturn(): Observable&lt;boolean&gt; {
     return this.http.get&lt;OrderType[]&gt;(`${this.baseUrl}`).pipe(
       map((lista: OrderType[]) =&gt; {
@@ -512,49 +515,43 @@ export class OrderService {
 &nbsp;
   //PUT - "/{id}"
   changeOne(order: OrderType): Observable&lt;boolean&gt; {
-    return this.http
-      .put&lt;OrderType&gt;(`${this.baseUrl}/${order.id}`, order)
-      .pipe(
-        map((order) =&gt; {
-          <span class="missing-if-branch" title="if path not taken" >I</span>if (!order) <span class="cstat-no" title="statement not covered" >return false;</span>
-          const lista = this.ordersList();
-          const changed = lista.find((x) =&gt; x.id === order.id);
-          <span class="missing-if-branch" title="else path not taken" >E</span>if (changed) {
-            Object.assign(changed, order); // Atualiza o item na lista com os novos dados
-            this.ordersList.set([...lista]); // Atualiza a signal para refletir as mudanças
-          }
-          this.notify.showSuccess(
-            `Pedido atualizado com sucesso: ID: ${order.id}.`,
-          );
-          return true;
-        }),
-        catchError(<span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; <span class="cstat-no" title="statement not covered" >this.handleError(error))</span>,
-      );
+    return this.http.put&lt;OrderType&gt;(`${this.baseUrl}/${order.id}`, order).pipe(
+      map((order) =&gt; {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!order) <span class="cstat-no" title="statement not covered" >return false;</span>
+        const lista = this.ordersList();
+        const changed = lista.find((x) =&gt; x.id === order.id);
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (changed) {
+          Object.assign(changed, order); // Atualiza o item na lista com os novos dados
+          this.ordersList.set([...lista]); // Atualiza a signal para refletir as mudanças
+        }
+        this.notify.showSuccess(
+          `Pedido atualizado com sucesso: ID: ${order.id}.`,
+        );
+        return true;
+      }),
+      catchError(<span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; <span class="cstat-no" title="statement not covered" >this.handleError(error))</span>,
+    );
   }
 &nbsp;
   //DELETE - "/{id}"
   removeOrder(orderId: number): void {
-    this.http.delete&lt;void&gt;(
-        `${this.baseUrl}/${orderId}`,{},)
-      .subscribe({
-        next: () =&gt; {
-          const lista = this.ordersList();
-          const changed = lista.findIndex((x) =&gt; x.id === orderId);
-          <span class="missing-if-branch" title="else path not taken" >E</span>if (changed &gt; -1) {
-            lista.splice(changed, 1);
-            this.ordersList.set([...lista]); // Atualiza a signal para refletir as mudanças
-          }
-          this.notify.showSuccess(
-            `Pedido removido com sucesso.`,
-          );
-          return true;
-        },
-        error: <span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; <span class="cstat-no" title="statement not covered" >this.handleError(error),</span>
-      });
+    this.http.delete&lt;void&gt;(`${this.baseUrl}/${orderId}`, {}).subscribe({
+      next: () =&gt; {
+        const lista = this.ordersList();
+        const changed = lista.findIndex((x) =&gt; x.id === orderId);
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (changed &gt; -1) {
+          lista.splice(changed, 1);
+          this.ordersList.set([...lista]); // Atualiza a signal para refletir as mudanças
+        }
+        this.notify.showSuccess(`Pedido removido com sucesso.`);
+        return true;
+      },
+      error: <span class="fstat-no" title="function not covered" >(e</span>rror) =&gt; <span class="cstat-no" title="statement not covered" >this.handleError(error),</span>
+    });
   }
 &nbsp;
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Erro desconhecido';
+    let errorMessage = "Erro desconhecido";
 &nbsp;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (error.error instanceof ErrorEvent) {
       // Erro do lado do cliente
@@ -580,7 +577,7 @@ export class OrderService {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-14T22:57:45.424Z
+                at 2026-03-15T00:06:50.526Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

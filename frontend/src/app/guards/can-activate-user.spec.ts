@@ -1,17 +1,17 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 import {
   ActivatedRouteSnapshot,
   CanActivateFn,
   RouterStateSnapshot,
   UrlTree,
   provideRouter,
-} from '@angular/router';
-import { TokenStorageService } from '../services/token-storage.service';
-import { signal } from '@angular/core';
+} from "@angular/router";
+import { TokenStorageService } from "../services/token-storage.service";
+import { signal } from "@angular/core";
 
-import { canActivateUser } from './can-activate-user';
+import { canActivateUser } from "./can-activate-user";
 
-describe('canActivateUser', () => {
+describe("canActivateUser", () => {
   const isAuthenticatedSignal = signal(false);
 
   const executeGuard: CanActivateFn = (...guardParameters) =>
@@ -32,11 +32,11 @@ describe('canActivateUser', () => {
     TestBed.inject(TokenStorageService);
   });
 
-  it('deve ser criado', () => {
+  it("deve ser criado", () => {
     expect(executeGuard).toBeTruthy();
   });
 
-  it('deve retornar true se o usuário estiver autenticado', () => {
+  it("deve retornar true se o usuário estiver autenticado", () => {
     isAuthenticatedSignal.set(true);
     const result = executeGuard(
       {} as ActivatedRouteSnapshot,
@@ -45,13 +45,13 @@ describe('canActivateUser', () => {
     expect(result).toBe(true);
   });
 
-  it('deve redirecionar para /login se o usuário não estiver autenticado', () => {
+  it("deve redirecionar para /login se o usuário não estiver autenticado", () => {
     isAuthenticatedSignal.set(false);
     const result = executeGuard(
       {} as ActivatedRouteSnapshot,
       {} as RouterStateSnapshot,
     );
     expect(result instanceof UrlTree).toBe(true);
-    expect((result as UrlTree).toString()).toBe('/login');
+    expect((result as UrlTree).toString()).toBe("/login");
   });
 });

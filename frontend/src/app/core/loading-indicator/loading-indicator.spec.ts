@@ -1,17 +1,17 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LoadingIndicator } from './loading-indicator';
-import { LoadingService } from './loading.service';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { LoadingIndicator } from "./loading-indicator";
+import { LoadingService } from "./loading.service";
 import {
   Router,
   RouteConfigLoadStart,
   RouteConfigLoadEnd,
-} from '@angular/router';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { By } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { createSpyObj, SpyObj } from '../../../test-helpers/spy-utils';
+} from "@angular/router";
+import { BehaviorSubject, Subject } from "rxjs";
+import { By } from "@angular/platform-browser";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { createSpyObj, SpyObj } from "../../../test-helpers/spy-utils";
 
-describe('LoadingIndicator', () => {
+describe("LoadingIndicator", () => {
   let component: LoadingIndicator;
   let fixture: ComponentFixture<LoadingIndicator>;
   let loadingServiceSpy: SpyObj<LoadingService>;
@@ -21,7 +21,7 @@ describe('LoadingIndicator', () => {
   beforeEach(async () => {
     loadingSubject = new BehaviorSubject<boolean>(false);
     loadingServiceSpy = createSpyObj<LoadingService>(
-      ['loadingOn', 'loadingOff'],
+      ["loadingOn", "loadingOff"],
       { loading$: loadingSubject.asObservable() } as Partial<LoadingService>,
     );
     routerEventsSubject = new Subject<any>();
@@ -41,28 +41,28 @@ describe('LoadingIndicator', () => {
     component = fixture.componentInstance;
   });
 
-  it('deve criar o componente', () => {
+  it("deve criar o componente", () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
-  it('deve exibir o spinner quando loading$ for true', () => {
+  it("deve exibir o spinner quando loading$ for true", () => {
     loadingSubject.next(true);
     fixture.detectChanges();
 
-    const spinner = fixture.debugElement.query(By.css('mat-spinner'));
+    const spinner = fixture.debugElement.query(By.css("mat-spinner"));
     expect(spinner).toBeTruthy();
   });
 
-  it('não deve exibir o spinner quando loading$ for false', () => {
+  it("não deve exibir o spinner quando loading$ for false", () => {
     loadingSubject.next(false);
     fixture.detectChanges();
 
-    const spinner = fixture.debugElement.query(By.css('mat-spinner'));
+    const spinner = fixture.debugElement.query(By.css("mat-spinner"));
     expect(spinner).toBeFalsy();
   });
 
-  it('deve reagir a eventos de rota quando detectRouteTransitions for true', () => {
+  it("deve reagir a eventos de rota quando detectRouteTransitions for true", () => {
     component.detectRouteTransitions = true;
     component.ngOnInit();
 
@@ -73,7 +73,7 @@ describe('LoadingIndicator', () => {
     expect(loadingServiceSpy.loadingOff).toHaveBeenCalled();
   });
 
-  it('não deve reagir a eventos de rota quando detectRouteTransitions for false', () => {
+  it("não deve reagir a eventos de rota quando detectRouteTransitions for false", () => {
     component.detectRouteTransitions = false;
     component.ngOnInit();
 

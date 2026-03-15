@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NotFound } from './not-found';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { NotFound } from "./not-found";
 
-describe('NotFound', () => {
+describe("NotFound", () => {
   let component: NotFound;
   let fixture: ComponentFixture<NotFound>;
 
@@ -15,14 +15,14 @@ describe('NotFound', () => {
     fixture.detectChanges();
   });
 
-  it('deve criar o componente', () => {
+  it("deve criar o componente", () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve exibir o texto do componente', () => {
+  it("deve exibir o texto do componente", () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('p')?.textContent).toContain(
-      'not-found works!',
+    expect(compiled.querySelector("p")?.textContent).toContain(
+      "not-found works!",
     );
   });
 });

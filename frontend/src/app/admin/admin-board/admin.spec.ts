@@ -1,13 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { of } from "rxjs";
 
-import { AdminBoard } from './admin-board';
-import { NotificationService } from 'src/app/services/notification.service';
-import { TitleService } from 'src/app/services/title.service';
-import { TokenStorageService } from 'src/app/services/token-storage.service';
-import { AuthService } from 'src/app/login/auth.service';
+import { AdminBoard } from "./admin-board";
+import { NotificationService } from "src/app/services/notification.service";
+import { TitleService } from "src/app/services/title.service";
+import { TokenStorageService } from "src/app/services/token-storage.service";
+import { AuthService } from "src/app/login/auth.service";
 
-describe('AdminBoard', () => {
+describe("AdminBoard", () => {
   let component: AdminBoard;
   let fixture: ComponentFixture<AdminBoard>;
   let titleServiceSpy: { setTitle: ReturnType<typeof vi.fn> };
@@ -22,7 +22,7 @@ describe('AdminBoard', () => {
       providers: [
         {
           provide: TokenStorageService,
-          useValue: { loggedUser$: of({ id: 1, nome: 'Admin' }) },
+          useValue: { loggedUser$: of({ id: 1, nome: "Admin" }) },
         },
         { provide: TitleService, useValue: titleServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
@@ -38,11 +38,11 @@ describe('AdminBoard', () => {
     fixture.detectChanges();
   });
 
-  it('deve criar o componente', () => {
+  it("deve criar o componente", () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve chamar setTitle no ngOnInit', () => {
+  it("deve chamar setTitle no ngOnInit", () => {
     expect(titleServiceSpy.setTitle).toHaveBeenCalled();
     expect(authServiceSpy.items).toHaveBeenCalled();
   });

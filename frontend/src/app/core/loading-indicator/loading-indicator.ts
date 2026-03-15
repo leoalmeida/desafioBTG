@@ -1,18 +1,18 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { Observable, tap } from 'rxjs';
-import { LoadingService } from './loading.service';
+import { Component, inject, Input, OnInit } from "@angular/core";
+import { Observable, tap } from "rxjs";
+import { LoadingService } from "./loading.service";
 import {
   RouteConfigLoadEnd,
   RouteConfigLoadStart,
   Router,
-} from '@angular/router';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AsyncPipe } from '@angular/common';
+} from "@angular/router";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { AsyncPipe } from "@angular/common";
 
 @Component({
-  selector: 'app-loading-indicator',
-  templateUrl: './loading-indicator.html',
-  styleUrls: ['./loading-indicator.css'],
+  selector: "app-loading-indicator",
+  templateUrl: "./loading-indicator.html",
+  styleUrls: ["./loading-indicator.css"],
   imports: [MatProgressSpinnerModule, AsyncPipe],
 })
 export class LoadingIndicator implements OnInit {

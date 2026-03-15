@@ -19,6 +19,7 @@ mvnw.cmd
 *.user
 *.userosscache
 *.sln.docstates
+**/coverage
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
