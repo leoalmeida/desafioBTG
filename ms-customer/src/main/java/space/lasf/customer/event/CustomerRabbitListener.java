@@ -15,12 +15,12 @@ public class CustomerRabbitListener {
     private final CustomerService customerService;
 
     @Autowired
-    public CustomerRabbitListener(CustomerService customerService) {
+    public CustomerRabbitListener(final CustomerService customerService) {
         this.customerService = customerService;
     }
 
     @RabbitListener(queues = RabbitConfig.QUEUE_CREATED)
-    public void handle(CustomerCreatedEvent event) {
+    public void handle(final CustomerCreatedEvent event) {
         // Lógica para processar o evento de criação de cliente
         log.info("Cliente criado: {}", event.getId());
         // Aqui você pode adicionar lógica adicional, como enviar notificações, etc.
@@ -34,7 +34,7 @@ public class CustomerRabbitListener {
     }
 
     @RabbitListener(queues = RabbitConfig.QUEUE_DELETED)
-    public void handle(DefaultEvent event) {
+    public void handle(final DefaultEvent event) {
         // Lógica para processar o evento de remoção de cliente
         log.info("Cliente removido: {}", event.getId());
         // Aqui você pode adicionar lógica adicional, como enviar notificações, etc.

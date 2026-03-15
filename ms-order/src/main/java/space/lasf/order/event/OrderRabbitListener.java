@@ -16,12 +16,12 @@ public class OrderRabbitListener {
     private final OrderService orderService;
 
     @Autowired
-    public OrderRabbitListener(OrderService orderService) {
+    public OrderRabbitListener(final OrderService orderService) {
         this.orderService = orderService;
     }
 
     @RabbitListener(queues = RabbitConfig.QUEUE_CREATED)
-    public void handle(OrderEvent event) {
+    public void handle(final OrderEvent event) {
         // Lógica para processar o evento de criação de pedido
         log.info("Pedido criado: {}", event.getCodigoPedido());
         // Aqui você pode adicionar lógica adicional, como atualizar o estoque, enviar notificações, etc.
@@ -44,7 +44,7 @@ public class OrderRabbitListener {
     }
 
     @RabbitListener(queues = RabbitConfig.QUEUE_DELETED)
-    public void handleOrderDeleted(DefaultEvent event) {
+    public void handleOrderDeleted(final DefaultEvent event) {
         // Lógica para processar o evento de exclusão de pedido
         log.info("Pedido deletado: {}", event.getId());
         // Aqui você pode adicionar lógica adicional, como atualizar o estoque, enviar notificações, etc.
