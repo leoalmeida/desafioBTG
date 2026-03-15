@@ -1,24 +1,45 @@
-@startuml C4_Component
+@startuml component_diagram
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
-title Backend Service - Component Diagram
+title BTG - Componentes de Backend
 
-Container(service, "Backend Service", "Spring Boot")
+Container_Boundary(customer_service, "ms-customer") {
+	Component(customer_controller, "CustomerController", "Spring Web", "Endpoints de cliente")
+	Component(customer_service_layer, "CustomerServiceImpl", "Service", "Regras de negocio")
+	Component(customer_repo, "CustomerRepository", "Spring Data JPA", "Persistencia de clientes")
+	Component(customer_producer, "CustomerRabbitProducer", "Spring AMQP", "Publica eventos")
+	Component(customer_listener, "CustomerRabbitListener", "Spring AMQP", "Consome eventos")
+	Component(order_client, "OrderClient", "OpenFeign", "Integra com ms-order")
+}
 
-Component(controller, "REST Controller", "Spring Web", "Handles HTTP requests")
-Component(service_layer, "Service Layer", "Spring Service", "Business rules")
-Component(repository, "Repository", "Spring Data MongoDB", "Data access layer")
-Component(messaging, "Event Publisher/Consumer", "Spring AMQP", "RabbitMQ integration")
+Container_Boundary(order_service, "ms-order") {
+	Component(order_controller, "OrderController", "Spring Web", "Endpoints de pedido")
+	Component(order_service_layer, "OrderServiceImpl", "Service", "Regras de negocio")
+	Component(order_repo, "OrderRepository", "Spring Data JPA", "Persistencia de pedidos")
+	Component(order_item_repo, "OrderItemRepository", "Spring Data JPA", "Persistencia de itens")
+	Component(order_producer, "OrderRabbitProducer", "Spring AMQP", "Publica eventos")
+	Component(order_listener, "OrderRabbitListener", "Spring AMQP", "Consome eventos")
+}
 
-ComponentDb(mongodb, "MongoDB")
-ComponentQueue(rabbitmq, "RabbitMQ")
+ComponentDb(mysql, "MySQL 8.4", "Database", "Persistencia")
+ComponentQueue(rabbitmq, "RabbitMQ", "AMQP", "Mensageria")
 
-Rel(controller, service_layer, "Calls")
-Rel(service_layer, repository, "Reads/Writes")
-Rel(repository, mongodb, "Stores data")
+Rel(customer_controller, customer_service_layer, "Chama")
+Rel(customer_service_layer, customer_repo, "Le e grava")
+Rel(customer_service_layer, order_client, "Chama")
+Rel(customer_producer, rabbitmq, "Publica")
+Rel(rabbitmq, customer_listener, "Entrega")
+Rel(customer_listener, customer_service_layer, "Chama")
+Rel(customer_repo, mysql, "Armazena dados")
 
-Rel(service_layer, messaging, "Publishes events")
-Rel(messaging, rabbitmq, "Publishes/Consumes")
+Rel(order_controller, order_service_layer, "Chama")
+Rel(order_service_layer, order_repo, "Le e grava")
+Rel(order_service_layer, order_item_repo, "Le e grava")
+Rel(order_producer, rabbitmq, "Publica")
+Rel(rabbitmq, order_listener, "Entrega")
+Rel(order_listener, order_service_layer, "Chama")
+Rel(order_repo, mysql, "Armazena dados")
+Rel(order_item_repo, mysql, "Armazena dados")
 
 @enduml

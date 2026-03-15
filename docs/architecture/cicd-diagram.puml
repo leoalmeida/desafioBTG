@@ -1,0 +1,38 @@
+@startuml cicd_diagram
+
+title BTG - CI/CD Pipeline (GitHub Actions)
+
+actor Desenvolvedor
+
+rectangle GitHub {
+
+    Desenvolvedor -> "Repositorio Git" : Envia codigo
+
+}
+
+rectangle "GitHub Actions" {
+
+    "workflow-frontend.yml" as wf_front
+    "workflow-backend-customers.yml" as wf_customer
+    "workflow-backend-orders.yml" as wf_order
+    "test + e2e + jacoco" as quality_gate
+    "upload de artefato" as artifact
+
+}
+
+rectangle "Cobertura" {
+    "Codecov (upload OIDC)" as codecov
+}
+
+"Repositorio Git" --> wf_front
+"Repositorio Git" --> wf_customer
+"Repositorio Git" --> wf_order
+
+wf_front --> quality_gate
+wf_customer --> quality_gate
+wf_order --> quality_gate
+
+quality_gate --> artifact
+quality_gate --> codecov
+
+@enduml

@@ -1,19 +1,21 @@
-@startuml C4_Context
+@startuml context_diagram
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
-title System Context Diagram
+title BTG - Diagrama de Contexto
 
-Person(user, "User", "User of the application")
+Person(user, "Usuario", "Cliente que gerencia clientes e pedidos")
 
-System(system, "Full Stack Application", "Application for managing business operations")
+System(system, "Plataforma BTG", "Aplicacao full stack para clientes e pedidos")
 
-System_Ext(mongodb, "MongoDB", "Primary database")
-System_Ext(rabbitmq, "RabbitMQ", "Messaging broker")
+System_Ext(mysql, "MySQL 8.4", "Persistencia de dados")
+System_Ext(rabbitmq, "RabbitMQ", "Broker AMQP")
+System_Ext(eureka, "Service Discovery", "Registro e descoberta de servicos")
 
-Rel(user, system, "Uses", "HTTPS")
+Rel(user, system, "Usa", "HTTPS")
 
-Rel(system, mongodb, "Stores data")
-Rel(system, rabbitmq, "Publishes/Consumes events")
+Rel(system, mysql, "Armazena dados")
+Rel(system, rabbitmq, "Publica e consome eventos")
+Rel(system, eureka, "Registro e descoberta de servicos")
 
 @enduml

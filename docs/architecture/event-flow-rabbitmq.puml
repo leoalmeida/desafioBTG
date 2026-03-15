@@ -1,0 +1,52 @@
+@startuml event_flow_diagram
+
+title BTG - Fluxo de Eventos RabbitMQ
+
+actor Cliente
+
+participant "API Gateway" as gateway
+participant "Customer Service" as customer
+participant "Order Service" as order
+participant "Customer Exchange" as c_exchange
+participant "Queue: customer.queue.created" as c_created_q
+participant "Queue: customer.queue.deleted" as c_deleted_q
+participant "Order Exchange" as o_exchange
+participant "Queue: order.queue.created" as o_created_q
+participant "Queue: order.queue.deleted" as o_deleted_q
+
+Cliente -> gateway : Criar cliente
+gateway -> customer : POST /customer
+customer -> c_exchange : publica customer.created
+c_exchange -> c_created_q : roteia customer.created
+c_created_q -> customer : consome evento
+customer -> customer : persiste cliente
+
+Cliente -> gateway : Remover cliente
+gateway -> customer : DELETE /customer/{id}
+customer -> c_exchange : publica customer.deleted
+c_exchange -> c_deleted_q : roteia customer.deleted
+c_deleted_q -> customer : consome evento
+customer -> order : DELETE /order/customer/{id}
+customer -> customer : remove cliente
+
+Cliente -> gateway : Criar pedido
+gateway -> order : POST /order
+order -> o_exchange : publica order.created
+o_exchange -> o_created_q : roteia order.created
+o_created_q -> order : consome evento
+order -> order : persiste pedido + itens
+
+Cliente -> gateway : Remover pedido
+gateway -> order : DELETE /order/{id}
+order -> o_exchange : publica order.deleted
+o_exchange -> o_deleted_q : roteia order.deleted
+o_deleted_q -> order : consome evento
+order -> order : remove pedido + itens
+
+note right of gateway
+	Fluxo padronizado de eventos:
+	- customer.created / customer.deleted
+	- order.created / order.deleted
+end note
+
+@enduml

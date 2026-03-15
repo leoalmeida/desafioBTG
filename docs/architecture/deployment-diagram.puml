@@ -1,0 +1,60 @@
+@startuml deployment_diagram
+
+title BTG - Diagrama de Deploy (Docker Compose)
+
+node "Usuario" {
+    component "Navegador"
+}
+
+node "Host Docker" {
+    node "frontend container" {
+        component Frontend
+    }
+
+    node "api-gateway container" {
+        component "API Gateway"
+    }
+
+    node "service-discovery container" {
+        component "Service Discovery (Eureka)"
+    }
+
+    node "ms-customer container" {
+        component "Customer Service"
+    }
+
+    node "ms-order container" {
+        component "Order Service"
+    }
+
+    node "rabbitmq container" {
+        component RabbitMQ
+    }
+
+    node "mysql container" {
+        database MySqlDB
+    }
+}
+
+"Navegador" --> Frontend : HTTP
+Frontend --> "API Gateway" : REST
+
+"API Gateway" --> "Service Discovery (Eureka)" : Resolve servicos
+"API Gateway" --> "Customer Service" : /api/v1/customer/**
+"API Gateway" --> "Order Service" : /api/v1/order/**
+
+"Customer Service" --> "Service Discovery (Eureka)" : Registra
+"Order Service" --> "Service Discovery (Eureka)" : Registra
+
+"Customer Service" --> MySqlDB : JDBC
+"Order Service" --> MySqlDB : JDBC
+
+"Customer Service" --> RabbitMQ : Publica eventos
+RabbitMQ --> "Customer Service" : Entrega eventos
+
+"Order Service" --> RabbitMQ : Publica eventos
+RabbitMQ --> "Order Service" : Entrega eventos
+
+"Customer Service" --> "Order Service" : OpenFeign
+
+@enduml

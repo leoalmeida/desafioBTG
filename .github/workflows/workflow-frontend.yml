@@ -84,7 +84,7 @@ jobs:
       - name: Run components layer tests
         run: npm run test:components:ci
 
-  coverage-gate-frontend:
+  coverage-frontend:
     name: Validate coverage thresholds
     needs: [lint-frontend, test-services-frontend, test-components-frontend]
     runs-on: ubuntu-latest
@@ -111,7 +111,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          use_oidc: true
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: frontend/coverage/app-frontend/clover.xml
           flags: frontend
           name: frontend-coverage
@@ -127,7 +127,7 @@ jobs:
 
   build-frontend:
     runs-on: ubuntu-latest # Use the latest Ubuntu runner
-    needs: [lint-frontend, test-services-frontend, test-components-frontend]
+    needs: [lint-frontend, test-services-frontend, test-components-frontend, coverage-frontend]
     strategy:
       matrix:
         node-version: [24]

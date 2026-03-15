@@ -1,38 +1,48 @@
-@startuml C4_Container
+@startuml container_diagram
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-title Container Diagram
+title BTG - Diagrama de Containers
 
-Person(user, "User")
+Person(user, "Usuario")
 
-System_Boundary(system, "Full Stack Application") {
+System_Boundary(system, "Plataforma BTG") {
 
-    Container(frontend, "Frontend", "SPA", "User interface")
+    Container(frontend, "Frontend", "SPA", "Interface do usuario")
 
-    Container(api_gateway, "API Gateway", "Spring Cloud Gateway", "Entry point for backend services")
+    Container(api_gateway, "API Gateway", "Spring Cloud Gateway", "Ponto de entrada")
 
-    Container(service_a, "Service A", "Spring Boot", "Business logic service")
+    Container(discovery, "Service Discovery", "Spring Cloud Netflix Eureka", "Registro de servicos")
 
-    Container(service_b, "Service B", "Spring Boot", "Business logic service")
+    Container(ms_customer, "Customer Service", "Spring Boot", "Gestao de clientes")
 
-    ContainerDb(mongodb, "MongoDB", "NoSQL Database")
+    Container(ms_order, "Order Service", "Spring Boot", "Gestao de pedidos")
 
-    ContainerQueue(rabbitmq, "RabbitMQ", "AMQP Message Broker")
+    ContainerDb(mysql, "MySQL 8.4", "Banco relacional", "Persistencia")
+
+    ContainerQueue(rabbitmq, "RabbitMQ", "Broker AMQP", "Mensageria assincrona")
 
 }
 
-Rel(user, frontend, "Uses", "HTTPS")
+Rel(user, frontend, "Usa")
 
-Rel(frontend, api_gateway, "Calls API", "REST")
+Rel(frontend, api_gateway, "REST")
 
-Rel(api_gateway, service_a, "Routes requests", "REST")
-Rel(api_gateway, service_b, "Routes requests", "REST")
+Rel(api_gateway, discovery, "Resolve servicos")
+Rel(api_gateway, ms_customer, "Roteia")
+Rel(api_gateway, ms_order, "Roteia")
 
-Rel(service_a, mongodb, "Reads/Writes")
-Rel(service_b, mongodb, "Reads/Writes")
+Rel(ms_customer, discovery, "Registra")
+Rel(ms_order, discovery, "Registra")
 
-Rel(service_a, rabbitmq, "Publishes events")
-Rel(service_b, rabbitmq, "Consumes events")
+Rel(ms_customer, mysql, "Le e grava")
+Rel(ms_order, mysql, "Le e grava")
+
+Rel(ms_customer, rabbitmq, "Publica eventos")
+Rel(ms_customer, rabbitmq, "Consome eventos")
+Rel(ms_order, rabbitmq, "Publica eventos")
+Rel(ms_order, rabbitmq, "Consome eventos")
+
+Rel(ms_customer, ms_order, "Chamadas sincronas", "OpenFeign/HTTP")
 
 @enduml
