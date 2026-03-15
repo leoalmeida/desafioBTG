@@ -30,7 +30,7 @@ import space.lasf.customer.dto.OrderDto;
 import space.lasf.customer.http.OrderClient;
 
 @EnabledIfSystemProperty(named = "docker.e2e", matches = "true")
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("e2e")
 class CustomerFlowE2ETest {
