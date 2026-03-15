@@ -124,3 +124,35 @@ jobs:
           name: frontend-coverage-report
           path: frontend/coverage/app-frontend/
           retention-days: 1
+
+  build-frontend:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+    needs: [lint-frontend, test-services-frontend, test-components-frontend]
+    strategy:
+      matrix:
+        node-version: [24]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6 # Action to checkout your repository code
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: frontend
+        run: npm ci 
+
+      - name: Build Angular Application
+        working-directory: frontend
+        run: npm run build
+
+      - name: Upload Frontend Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 1
