@@ -21,8 +21,6 @@
     </properties>
 
     <modules>
-        <module>api-gateway</module>
-        <module>service-discovery</module>
         <module>ms-customer</module>
         <module>ms-order</module>
     </modules>
