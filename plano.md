@@ -266,9 +266,16 @@ Equivalente: 8 a 12 dias-pessoa
 
 ## 9. Backlog por Serviço
 
+Padrao de identificacao das historias:
+
+- `PROJETO-SERVICO-NNN`
+- `PROJETO`: `VTB`, `MAG` ou `BTG`
+- `SERVICO`: codigo curto do modulo ou contexto
+- `NNN`: sequencial de tres digitos
+
 ### `ms-order`
 
-Historia `BTG-ORD-01`
+Historia `BTG-ORD-001`
 
 - como plataforma de processamento, quero consumir pedidos da fila RabbitMQ para persistir o pedido e seus itens com consistencia
 
@@ -278,7 +285,7 @@ Criterios de aceite:
 - pedido e itens sao persistidos com os campos necessarios aos relatorios
 - falhas de consumo sao tratadas de forma observavel e testavel
 
-Historia `BTG-ORD-02`
+Historia `BTG-ORD-002`
 
 - como usuario de negocio, quero consultar o valor total do pedido para obter visao financeira por pedido
 
@@ -288,7 +295,7 @@ Criterios de aceite:
 - o contrato documenta a resposta e o comportamento para pedido inexistente
 - testes cobrem calculo e cenarios de erro
 
-Historia `BTG-ORD-03`
+Historia `BTG-ORD-003`
 
 - como consumidor do sistema, quero listar os pedidos realizados por cliente para acompanhar historico operacional
 
@@ -297,7 +304,7 @@ Criterios de aceite:
 - a consulta retorna apenas os pedidos do cliente solicitado
 - a resposta e consistente com os dados persistidos pela ingestao
 
-Historia `BTG-ORD-04`
+Historia `BTG-ORD-004`
 
 - como time tecnico, quero garantir idempotencia no consumo para evitar duplicidade de agregados
 
@@ -308,7 +315,7 @@ Criterios de aceite:
 
 ### `ms-customer`
 
-Historia `BTG-CUS-01`
+Historia `BTG-CUS-001`
 
 - como usuario de negocio, quero consultar a quantidade de pedidos por cliente para avaliar volume transacional
 
@@ -318,7 +325,7 @@ Criterios de aceite:
 - a documentacao OpenAPI descreve o contrato exposto
 - testes cobrem cenario sem pedidos e com multiplos pedidos
 
-Historia `BTG-CUS-02`
+Historia `BTG-CUS-002`
 
 - como frontend, quero acessar contratos orientados ao cliente para montar telas de consulta sem logica extra no cliente
 
@@ -329,7 +336,7 @@ Criterios de aceite:
 
 ### `frontend`
 
-Historia `BTG-FE-01`
+Historia `BTG-FE-001`
 
 - como operador, quero consultar relatorios por pedido e por cliente em uma interface unica
 
@@ -338,7 +345,7 @@ Criterios de aceite:
 - a interface apresenta filtros e resultados para os relatorios definidos como Must Have
 - os dados exibidos correspondem aos contratos do backend
 
-Historia `BTG-FE-02`
+Historia `BTG-FE-002`
 
 - como usuario, quero visualizar estados de carregamento, vazio e erro para compreender o resultado da consulta
 
