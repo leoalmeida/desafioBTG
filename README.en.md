@@ -189,6 +189,8 @@ docker compose up --build
 ## References
 
 - roadmap and planning: [plano.md](plano.md)
+- executive portfolio backlog: [../votacao-backend/docs/portfolio/executive-backlog.md](../votacao-backend/docs/portfolio/executive-backlog.md)
+- challenge comparison matrix: [../votacao-backend/docs/portfolio/challenge-comparison.md](../votacao-backend/docs/portfolio/challenge-comparison.md)
 - event-driven architecture ADR: [docs/adr/ADR-001-event-driven-architecture.md](docs/adr/ADR-001-event-driven-architecture.md)
 - architecture diagrams: [docs/architecture](docs/architecture)
 - challenge statement: [problem.md](problem.md)

@@ -189,6 +189,8 @@ docker compose up --build
 ## Referencias
 
 - roadmap e planejamento: [plano.md](plano.md)
+- backlog executivo do portfólio: [../votacao-backend/docs/portfolio/backlog-executivo.md](../votacao-backend/docs/portfolio/backlog-executivo.md)
+- matriz comparativa dos desafios: [../votacao-backend/docs/portfolio/matriz-comparativa.md](../votacao-backend/docs/portfolio/matriz-comparativa.md)
 - ADR de arquitetura orientada a eventos: [docs/adr/ADR-001-event-driven-architecture.md](docs/adr/ADR-001-event-driven-architecture.md)
 - diagramas: [docs/architecture](docs/architecture)
 - enunciado do desafio: [problem.md](problem.md)

@@ -264,7 +264,100 @@ Equivalente: 8 a 12 dias-pessoa
 - release: validar imagens Docker, pipeline e prontidão para avaliação final
 - docs: consolidar relatório técnico, operação e checklist de entrega
 
-## 9. Priorização MoSCoW
+## 9. Backlog por Serviço
+
+### `ms-order`
+
+Historia `BTG-ORD-01`
+
+- como plataforma de processamento, quero consumir pedidos da fila RabbitMQ para persistir o pedido e seus itens com consistencia
+
+Criterios de aceite:
+
+- a mensagem de pedido e validada antes da persistencia
+- pedido e itens sao persistidos com os campos necessarios aos relatorios
+- falhas de consumo sao tratadas de forma observavel e testavel
+
+Historia `BTG-ORD-02`
+
+- como usuario de negocio, quero consultar o valor total do pedido para obter visao financeira por pedido
+
+Criterios de aceite:
+
+- a API retorna o valor total calculado a partir dos itens persistidos
+- o contrato documenta a resposta e o comportamento para pedido inexistente
+- testes cobrem calculo e cenarios de erro
+
+Historia `BTG-ORD-03`
+
+- como consumidor do sistema, quero listar os pedidos realizados por cliente para acompanhar historico operacional
+
+Criterios de aceite:
+
+- a consulta retorna apenas os pedidos do cliente solicitado
+- a resposta e consistente com os dados persistidos pela ingestao
+
+Historia `BTG-ORD-04`
+
+- como time tecnico, quero garantir idempotencia no consumo para evitar duplicidade de agregados
+
+Criterios de aceite:
+
+- reprocessar a mesma mensagem nao gera novo pedido nem agregados incorretos
+- a estrategia de retry e erro fica documentada
+
+### `ms-customer`
+
+Historia `BTG-CUS-01`
+
+- como usuario de negocio, quero consultar a quantidade de pedidos por cliente para avaliar volume transacional
+
+Criterios de aceite:
+
+- a API retorna a quantidade correta com base nos pedidos ingeridos
+- a documentacao OpenAPI descreve o contrato exposto
+- testes cobrem cenario sem pedidos e com multiplos pedidos
+
+Historia `BTG-CUS-02`
+
+- como frontend, quero acessar contratos orientados ao cliente para montar telas de consulta sem logica extra no cliente
+
+Criterios de aceite:
+
+- os endpoints expostos pelo modulo estao alinhados ao consumo do frontend
+- erros e estados vazios retornam payloads consistentes
+
+### `frontend`
+
+Historia `BTG-FE-01`
+
+- como operador, quero consultar relatorios por pedido e por cliente em uma interface unica
+
+Criterios de aceite:
+
+- a interface apresenta filtros e resultados para os relatorios definidos como Must Have
+- os dados exibidos correspondem aos contratos do backend
+
+Historia `BTG-FE-02`
+
+- como usuario, quero visualizar estados de carregamento, vazio e erro para compreender o resultado da consulta
+
+Criterios de aceite:
+
+- cada fluxo principal exibe feedback coerente em sucesso, erro e ausencia de dados
+- falhas de integracao nao quebram a navegacao principal
+
+## 10. RACI Simplificada
+
+| Atividade | Backend | Frontend | QA | DevOps |
+| --- | --- | --- | --- | --- |
+| Consumo RabbitMQ, persistencia e APIs backend | A/R | I | C | I |
+| Telas e integracao do frontend | C | A/R | C | I |
+| Estrategia e execucao de testes | R | R | A | C |
+| Docker, filas, banco e pipeline | C | I | C | A/R |
+| Troubleshooting e readiness de entrega | R | C | C | A/R |
+
+## 11. Priorização MoSCoW
 
 ### Must Have
 
@@ -293,7 +386,7 @@ Equivalente: 8 a 12 dias-pessoa
 - autenticação/autorização corporativa completa
 - deploy automatizado em nuvem com observabilidade avançada
 
-## 10. Estimativa por Frente
+## 12. Estimativa por Frente
 
 Referência inicial para planejamento macro:
 
@@ -309,7 +402,7 @@ Observações:
 - as estimativas consideram complexidade técnica moderada e equipe familiarizada com Spring Boot, Angular, RabbitMQ e MySQL
 - a reestimativa deve acontecer ao final de cada sprint com base em throughput real
 
-## 11. Definition of Done
+## 13. Definition of Done
 
 Antes de cada merge:
 
@@ -321,7 +414,7 @@ Antes de cada merge:
 - pipeline CI verde
 - documentação impactada atualizada
 
-## 12. Riscos e Mitigações
+## 14. Riscos e Mitigações
 
 Riscos principais:
 
