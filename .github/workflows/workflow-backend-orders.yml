@@ -63,7 +63,10 @@ jobs:
       - name: Roda os testes do módulo ms-order
         run: mvn -B -f ms-order/pom.xml clean package
 
-      - name: Run E2E tests do módulo ms-order
+        - name: Valida contrato OpenAPI do módulo ms-order
+          run: mvn -B -f ms-order/pom.xml -Dtest=OrderOpenApiContractTest test
+
+        - name: Run E2E tests do módulo ms-order
         run: mvn -B -f ms-order/pom.xml -Ddocker.e2e=true -Dtest=OrderFlowE2ETest test
 
       - name: Run Code Quality Analysis do módulo ms-order

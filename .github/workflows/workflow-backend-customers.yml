@@ -64,6 +64,11 @@ jobs:
         run: mvn -B -f ms-customer/pom.xml clean package
 
       #- name: Run E2E tests do módulo ms-customer
+
+        - name: Valida contrato OpenAPI do módulo ms-customer
+          run: mvn -B -f ms-customer/pom.xml -Dtest=CustomerOpenApiContractTest test
+
+        #- name: Run E2E tests do módulo ms-customer
       #  run: mvn -B -f ms-customer/pom.xml -Ddocker.e2e=false -Dtest=CustomerFlowE2ETest test
 
       - name: Run Code Quality Analysis do módulo ms-customer

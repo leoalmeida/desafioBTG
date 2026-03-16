@@ -1,0 +1,265 @@
+openapi: 3.0.3
+info:
+  title: ms-order API
+  version: 0.0.1
+
+paths:
+  /api/v1/order:
+    get:
+      operationId: getOrders
+      summary: Lista todos os pedidos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderDto'
+    post:
+      operationId: createOrder
+      summary: Cria um novo pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDto'
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/v1/order/quantity/{customerId}:
+    get:
+      operationId: getQuantityOrdersByCustomerId
+      summary: Quantidade de pedidos de um cliente
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+
+  /api/v1/order/customer/{customerId}:
+    get:
+      operationId: getOrdersByCustomerId
+      summary: Lista pedidos de um cliente
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderDto'
+    delete:
+      operationId: removeOrdersByCustomerId
+      summary: Remove pedidos de um cliente
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: No Content
+
+  /api/v1/order/{orderId}:
+    get:
+      operationId: getOrderById
+      summary: Busca pedido por ID
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+    put:
+      operationId: updateOrder
+      summary: Atualiza um pedido
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDto'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+    delete:
+      operationId: removeOrder
+      summary: Remove um pedido
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: No Content
+
+  /api/v1/order/{orderId}/exists:
+    get:
+      operationId: isOrderValid
+      summary: Verifica se pedido existe
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /api/v1/order/{orderId}/total:
+    get:
+      operationId: getOrderTotal
+      summary: Retorna o total do pedido
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: number
+        '404':
+          description: Not Found
+
+components:
+  schemas:
+    OrderDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          nullable: true
+        customerId:
+          type: integer
+          format: int64
+          nullable: true
+        totalPrice:
+          type: number
+          nullable: true
+        itemList:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/OrderItemDto'
+
+    OrderItemDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          nullable: true
+        orderId:
+          type: integer
+          format: int64
+          nullable: true
+        productName:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          nullable: true
+        price:
+          type: number
+          nullable: true
+
+    ResponseError:
+      type: object
+      properties:
+        timestamp:
+          oneOf:
+            - type: string
+            - type: integer
+        status:
+          type: string
+        statusCode:
+          type: integer
+        error:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    BusinessError:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
