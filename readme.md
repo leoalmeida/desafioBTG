@@ -1,6 +1,53 @@
 # desafioBTG
 
-[Português](README.md) | [English](README.en.md)
+[Português](readme.md) | [English](README.en.md)
+
+Plataforma full stack para processamento de pedidos e consulta de relatórios, com frontend Angular, serviços Spring Boot, RabbitMQ, MySQL e Docker Compose.
+
+## Resumo Executivo
+
+Este repositório implementa o desafio BTG com foco em ingestão assíncrona de pedidos, persistência dos dados e exposição de consultas para relatórios operacionais por cliente e por pedido.
+
+Objetivos do projeto:
+
+- consumir pedidos enviados para uma fila RabbitMQ
+- persistir dados e agregados em MySQL
+- expor APIs REST para consulta dos relatórios solicitados
+- integrar backend e frontend com qualidade contínua por testes e pipeline
+
+Escopo principal:
+
+- `frontend`: interface Angular para consulta dos dados
+- `ms-customer`: domínio relacionado ao cliente e consultas associadas
+- `ms-order`: consumo de pedidos, persistência e consultas de relatório
+- `docs`: arquitetura, ADRs e material de apoio
+
+Arquitetura resumida:
+
+Frontend
+	|
+APIs REST
+	|
+`ms-customer` + `ms-order`
+	|
+RabbitMQ + MySQL
+
+## Stack
+
+- Java 17
+- Spring Boot
+- Angular 21
+- MySQL 8
+- RabbitMQ
+- Docker Compose
+- GitHub Actions + Codecov
+
+## Status do Projeto
+
+- backend organizado em `ms-customer` e `ms-order`
+- frontend Angular versionado no mesmo repositório
+- documentação arquitetural e ADRs em `docs`
+- roadmap detalhado em [plano.md](plano.md)
 
 ## Build, Testes e Cobertura
 
@@ -12,64 +59,61 @@
 
 Relatorios de cobertura backend sao gerados com JaCoCo e publicados como artefatos nos jobs de teste.
 
-![Java](https://img.shields.io/badge/Java-17-007396?logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot&logoColor=white)
-![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
-![RabbitMQ](https://img.shields.io/badge/RabbitMQ-AMQP-FF6600?logo=rabbitmq&logoColor=white)
-
-Plataforma full stack baseada em microsservicos com frontend Angular, API Gateway, Service Discovery, ms-customer e ms-order.
-
 ## Sumario
 
-- [Visao Geral](#visao-geral)
+- [Resumo Executivo](#resumo-executivo)
+- [Stack](#stack)
+- [Status do Projeto](#status-do-projeto)
 - [Build, Testes e Cobertura](#build-testes-e-cobertura)
-- [Portas e Discovery](#portas-e-discovery)
+- [Modulos do Repositorio](#modulos-do-repositorio)
+- [Portas e Integracoes](#portas-e-integracoes)
 - [Requisitos](#requisitos)
-- [Como Rodar](#como-rodar)
+- [Como Rodar Rapido](#como-rodar-rapido)
 - [Configuracao](#configuracao)
 - [Testes](#testes)
 - [Docker](#docker)
 - [Troubleshooting](#troubleshooting)
+- [Referencias](#referencias)
 
-## Visao Geral
+## Modulos do Repositorio
 
-- Java 17
-- Spring Boot / Spring Cloud
-- Angular 21
-- MySQL 8
-- RabbitMQ
-- Maven multi-modulo
+Modulos no repositorio raiz:
 
-Modulos no agregador raiz:
+- `frontend`
+- `ms-customer`
+- `ms-order`
+- `docs`
+- `pom.xml` raiz para build agregado de backend
 
-- frontend
-- api-gateway
-- service-discovery
-- ms-customer
-- ms-order
+## Portas e Integracoes
 
-## Portas e Discovery
-
-- frontend: http://localhost:4200
-- api-gateway: http://localhost:8082
-- service-discovery: http://localhost:8761
-- ms-customer e ms-order: server.port=0 (porta dinamica, registrados no Eureka)
+- frontend: geralmente `http://localhost:4200` quando executado via Angular CLI
+- `ms-customer` e `ms-order`: `server.port=0` quando executados localmente fora do Docker
+- MySQL: `3306` no container, com mapeamento via variavel `MYSQL_LOCAL_PORT`
+- RabbitMQ: `5672` e painel de gerenciamento em `15672`
 
 ## Requisitos
 
 - JDK 17
-- Maven 3.9+ (ou mvnw)
+- Maven 3.9+
 - Node.js 20+ e npm
 - Docker (opcional para ambiente completo)
 
-## Como Rodar
+## Como Rodar Rapido
+
+### Subida local essencial
+
+1. executar o build backend na raiz
+2. instalar dependencias do frontend
+3. subir MySQL e RabbitMQ via Docker Compose ou usar ambiente equivalente
+4. iniciar `ms-customer` e `ms-order`
+5. iniciar o frontend e validar as consultas
 
 ### 1. Build backend
 
 ```powershell
 Set-Location "c:\Users\leo_a\projetos\desafioBTG"
-.\mvnw.cmd clean install
+mvn clean install
 ```
 
 ### 2. Frontend
@@ -80,19 +124,25 @@ npm install
 npm start
 ```
 
-### 3. Subir servicos backend (ordem recomendada)
+### 3. Subir servicos backend
 
-1. service-discovery
-2. api-gateway
-3. ms-customer
-4. ms-order
+1. ms-customer
+2. ms-order
 
 Exemplo:
 
 ```powershell
-Set-Location "c:\Users\leo_a\projetos\desafioBTG\service-discovery"
-..\mvnw.cmd spring-boot:run
+Set-Location "c:\Users\leo_a\projetos\desafioBTG\ms-customer"
+mvn spring-boot:run
 ```
+
+Repita para `ms-order` em outro terminal.
+
+### Resultado esperado
+
+- frontend disponivel localmente
+- servicos backend conectados a MySQL e RabbitMQ
+- consultas de relatorio acessiveis conforme os contratos do projeto
 
 ## Configuracao
 
@@ -119,8 +169,6 @@ npm --prefix frontend run test:ci:threshold
 ```powershell
 mvn -B -f ms-order/pom.xml clean package
 mvn -B -f ms-customer/pom.xml clean package
-mvn -B -f api-gateway/pom.xml clean package
-mvn -B -f service-discovery/pom.xml clean package
 ```
 
 ## Docker
@@ -134,6 +182,13 @@ docker compose up --build
 
 ## Troubleshooting
 
-- Servicos nao aparecem no Eureka: confirme se service-discovery iniciou primeiro.
 - Erro de conexao com banco: valide variaveis MYSQL_* e SPRING_APPLICATION_JSON no compose.
-- Frontend sem acesso a API: valide se gateway esta ativo em 8082.
+- Erro no consumo de pedidos: valide se RabbitMQ esta ativo e se as configuracoes de fila estao corretas.
+- Frontend sem acesso a API: valide variaveis de ambiente, proxy e se os servicos backend estao ativos.
+
+## Referencias
+
+- roadmap e planejamento: [plano.md](plano.md)
+- ADR de arquitetura orientada a eventos: [docs/adr/ADR-001-event-driven-architecture.md](docs/adr/ADR-001-event-driven-architecture.md)
+- diagramas: [docs/architecture](docs/architecture)
+- enunciado do desafio: [problem.md](problem.md)

@@ -1,284 +1,336 @@
-# Plano de Trabalho - Desenvolvimento da Aplicação
+# Plano de Trabalho - desafioBTG
 
-1. Environment setup
-1. Data modeling
-1. Message-consumer microservice
-1. Service & repository layers
-1. REST API with OpenAPI documentation
-1. Integration tests (Testcontainers / MockRabbit + in-memory MongoDB)
-1. Unit tests (JUnit + Mockito)
-1. API contract tests ()
+## 1. Objetivo
 
-# 1. Fase de Planejamento e Arquitetura
-## 1.1 Definição de arquitetura
+Entregar e evoluir a solução de processamento de pedidos e consulta de relatórios, garantindo:
 
-Serão definidos os principais blocos do sistema.
+- consumo confiável de pedidos via RabbitMQ
+- persistência consistente dos dados em MySQL
+- APIs REST para consulta de totais, quantidade de pedidos por cliente e lista de pedidos
+- integração com frontend e qualidade contínua via testes e pipeline
 
-Arquitetura sugerida
+## 2. Escopo Atual do Repositório
+
+Módulos e diretórios principais:
+
+- `frontend`
+- `ms-customer`
+- `ms-order`
+- `docs`
+- `.github/workflows`
+
+Tecnologias base:
+
+- Java 17
+- Spring Boot
+- Angular 21
+- MySQL
+- RabbitMQ
+- Docker Compose
+- GitHub Actions + Codecov
+
+## 3. Arquitetura e Decisões
+
+Fluxo macro:
 
 Frontend
    |
-API Gateway (Spring Cloud)
+APIs de consulta
    |
-Backend Services
-   |-- Service A
-   |-- Service B
+`ms-customer` e `ms-order`
    |
-Messaging (RabbitMQ)
-   |
-MongoDB
+RabbitMQ + MySQL
 
-Tecnologias principais:
+Documentos de apoio:
 
-* Backend: Spring Boot + Spring Web
-* Persistência: Spring Data MongoDB + MongoDB
-* Integração assíncrona: RabbitMQ
-* Infraestrutura: Docker
-* CI/CD: GitHub Actions
+- [ADR - Event Driven Architecture](docs/adr/ADR-001-event-driven-architecture.md)
+- [Container Diagram](docs/architecture/container-diagram.puml)
+- [Component Diagram](docs/architecture/component-diagram-backend.puml)
 
-Definir também:
+Decisões obrigatórias para novas features:
 
-* contratos de API
-* eventos de mensageria
-* estrutura de módulos
-* estratégia de versionamento
+- contrato OpenAPI primeiro nas APIs expostas
+- mensagens versionadas e consumidor idempotente
+- persistência orientada aos relatórios solicitados pelo desafio
+- frontend evoluindo sobre contratos estáveis
 
-## 1.1 Context Diagram (C4 - Level 1)
+## 4. Estratégia de Desenvolvimento
 
-Mostra o sistema e os atores externos.
+Modelo de execução: vertical slices por capacidade de negócio.
 
-[Diagrama](docs/architecture/context-diagram.puml)
+Cada slice deve incluir:
 
-## 1.2 Container Diagram (C4 - Level 2)
+1. modelagem de domínio
+2. persistência (`repository`)
+3. regra de negócio (`service`)
+4. mensageria (`consumer` e contratos)
+5. API (`controller` + DTOs + validações)
+6. testes unitários
+7. testes de integração
+8. atualização frontend (quando aplicável)
 
-Mostra os containers do sistema (apps, APIs, bancos, etc)
+Estrutura padrão dos serviços:
 
-[Diagrama](docs/architecture/container-diagram.puml)
+- `controller`
+- `service`
+- `repository`
+- `domain`
+- `dto`
+- `config`
+- `messaging`
 
-## 1.3 Component Diagram (C4 - Level 3)
+## 5. Fases de Entrega
 
-Mostra os componentes internos de um serviço Spring Boot.
+### Fase 1 - Foundation
 
-[Diagrama](docs/architecture/component-diagram-backend.puml)
+Objetivo: estabilizar ambiente, contratos e build.
 
-# 2. Setup do Projeto (Foundation)
+Entregáveis:
 
-Essa fase cria toda a base de engenharia antes da primeira feature.
+- Docker Compose funcional com frontend, serviços, MySQL e RabbitMQ
+- variáveis de ambiente e convenções de configuração revisadas
+- build e pipelines padronizados para backend e frontend
+- documentação de execução local atualizada
 
-## 2.1 Estrutura de repositório
+Critérios de aceite:
 
-Exemplo:
+- backend compila na raiz com `mvn clean install`
+- frontend sobe localmente e integra com as APIs disponíveis
 
-project-root
-│
-├── backend
-│   ├── api-gateway
-│   ├── service-users
-│   ├── service-orders
-│
-├── frontend
-│
-├── infrastructure
-│   ├── docker
-│   ├── rabbitmq
-│   ├── mongodb
-│
-└── docs
+### Fase 2 - Domínio de Pedidos e Relatórios
 
-## 2.2 Setup de containers
+Objetivo: consolidar os casos de uso centrais do desafio.
 
-Criar ambiente local com:
+Entregáveis mínimos:
 
-* Docker
-* MongoDB
-* RabbitMQ
+- consumidor RabbitMQ para ingestão de pedidos
+- persistência dos pedidos e agregados necessários
+- API para valor total do pedido
+- API para quantidade de pedidos por cliente
+- API para listagem de pedidos por cliente
 
-## 2.3 Pipeline CI/CD
+Critérios de aceite:
 
-Criar pipeline inicial no GitHub Actions.
+- cálculo e consulta dos relatórios com testes automatizados
+- payload de entrada consumido e persistido corretamente
 
-Pipeline básico:
+### Fase 3 - Integração e Consistência
+
+Objetivo: integrar backend e frontend com confiabilidade operacional.
+
+Entregáveis:
+
+- contratos de API estabilizados e documentados
+- integração do frontend com consultas de relatório
+- testes de integração com MySQL e RabbitMQ via containers
+- idempotência, retry e tratamento de falhas nos consumidores
+
+Critérios de aceite:
+
+- mensagens duplicadas não geram inconsistência
+- frontend consegue consumir os relatórios principais sem ajuste manual de contrato
+
+### Fase 4 - Observabilidade e Release Readiness
+
+Objetivo: elevar robustez para demonstração e ambientes superiores.
+
+Entregáveis:
+
+- logs estruturados e troubleshooting consolidado
+- cobertura mínima acordada por módulo
+- revisão de performance das consultas e payloads
+- validação final de imagens Docker e pipeline
+
+Critérios de aceite:
+
+- execução local previsível para avaliadores
+- documentação suficiente para build, teste e operação
+
+## 6. Estratégia de Testes
+
+### 6.1 Unitários
+
+Ferramentas:
+
+- JUnit 5
+- Mockito
+- framework de testes Angular já configurado no frontend
+
+Cobertura mínima por slice:
+
+- regras de negócio
+- agregações e cálculos de relatório
+- mapeamentos críticos
+
+### 6.2 Integração
+
+Ferramentas:
+
+- Spring Boot Test
+- Testcontainers (MySQL e RabbitMQ)
+
+Escopo:
+
+- consumo de mensagens e persistência
+- integração repositório + banco
+- integração entre camadas da API
+
+### 6.3 Contrato de API
+
+Ferramentas sugeridas:
+
+- validação OpenAPI no pipeline
+- testes de contrato com MockMvc ou Rest Assured
+
+Objetivos:
+
+- garantir aderência entre API e frontend
+- prevenir regressões nas consultas de relatório
+
+## 7. CI/CD e Releases
+
+Pipeline mínimo por módulo:
 
 1. build
-1. testes unitários
-1. testes de integração
-1. build docker
-1. push registry
-1. deploy ECS, GCP ou azure
+2. testes unitários
+3. testes de integração
+4. cobertura e publicação de relatório
+5. build de imagem Docker
 
-# 3. Estratégia de Desenvolvimento
+Ambientes-alvo:
 
-Utilize vertical slices (feature por feature).
+- local
+- dev
+- homologação
+- prod
 
-Cada feature inclui:
+Política de merge:
 
-1. Model
-1. Repository
-1. Service
-1. Controller
-1. Testes
-1. API docs
-1. Frontend
+- pipeline verde obrigatório
+- cobertura mínima respeitada
+- revisão de código aprovada
 
-# 4. Padrão de Backend
+## 8. Roadmap Sugerido (4 Sprints)
 
-Estrutura do serviço:
+Premissa de conversão para planejamento inicial:
 
-controller
-service
-repository
-domain
-dto
-config
-messaging
+- 2 pontos = 1 dia-pessoa
+- a conversão serve para previsão macro, não para compromisso fechado
 
-exemplo:
+### Sprint 1
 
-user
- ├── controller
- ├── service
- ├── repository
- ├── domain
- └── dto
- 
-# 5. Estratégia de Testes
+Estimativa: 20 a 28 pontos
 
-Esse stack já define muito bem os níveis.
+Equivalente: 10 a 14 dias-pessoa
 
-## 5.1 Testes Unitários
+- foundation: revisar `docker-compose`, `.env`, build backend e frontend
+- `ms-order`: revisar contratos de entrada, modelo de pedido e persistência base
+- `ms-customer`: revisar responsabilidades atuais e contratos expostos
+- frontend: revisar ambientes, proxy e integração base
+- docs: consolidar arquitetura e guias de execução local
 
-Ferramentas:
+### Sprint 2
 
-* JUnit
-* Mockito
+Estimativa: 24 a 32 pontos
 
-Testar:
+Equivalente: 12 a 16 dias-pessoa
 
-* services
-* regras de negócio
-* mapeamentos
+- `ms-order`: concluir consumo RabbitMQ e persistência dos pedidos
+- `ms-order`: implementar APIs de total do pedido e listagem por cliente
+- `ms-customer`: consolidar APIs e regras relacionadas ao cliente
+- frontend: integrar consultas principais e estados de tela
+- testes: cobrir regras principais com testes unitários e integração
 
-5.2 Testes de Integração
+### Sprint 3
 
-Ferramentas:
+Estimativa: 20 a 28 pontos
 
-* Testcontainers
-* MongoDB container
-* RabbitMQ container
+Equivalente: 10 a 14 dias-pessoa
 
-Exemplo:
+- mensageria: implementar idempotência, retry e tratamento de falhas
+- relatórios: concluir quantidade de pedidos por cliente e refinamentos de consulta
+- frontend: ajustar experiência de consulta e feedback de erro
+- testes: validar cenários com MySQL e RabbitMQ via Testcontainers
+- docs: registrar contratos de eventos e fluxos de integração
 
-@SpringBootTest
-@Testcontainers
-class OrderServiceIT
+### Sprint 4
 
-Subir:
+Estimativa: 16 a 24 pontos
 
-* Mongo
-* RabbitMQ
+Equivalente: 8 a 12 dias-pessoa
 
-## 5.3 Testes de API
+- observabilidade: revisar logs, saúde e troubleshooting por módulo
+- hardening: revisar performance, queries e configuração sensível
+- release: validar imagens Docker, pipeline e prontidão para avaliação final
+- docs: consolidar relatório técnico, operação e checklist de entrega
 
-Ferramenta:
+## 9. Priorização MoSCoW
 
-* 
+### Must Have
 
-Objetivo:
+- consumo de pedidos via RabbitMQ
+- persistência em MySQL
+- APIs para total do pedido, quantidade por cliente e listagem por cliente
+- integração frontend com fluxos principais
+- testes unitários e de integração para casos críticos
+- pipeline de CI com build, testes e cobertura
 
-* validar contrato OpenAPI
-* garantir que API implementa spec
+### Should Have
 
-# 6. Mensageria (RabbitMQ)
+- idempotência, retry e tratamento de falhas nos consumidores
+- contratos OpenAPI atualizados
+- troubleshooting e operação local bem documentados
 
-Definir eventos desde o início.
+### Could Have
 
-Exemplo:
+- dashboards e métricas operacionais adicionais
+- geração automatizada de client frontend a partir de OpenAPI
+- testes de performance nas consultas mais pesadas
 
-order.created
-order.paid
-order.cancelled
+### Won't Have (nesta fase)
 
-Fluxo:
+- ecossistema completo de discovery/gateway dentro deste repositório raiz
+- autenticação/autorização corporativa completa
+- deploy automatizado em nuvem com observabilidade avançada
 
-Service A -> publish event -> RabbitMQ -> Service B
+## 10. Estimativa por Frente
 
-Boas práticas:
+Referência inicial para planejamento macro:
 
-* eventos imutáveis
-* versionamento
-* idempotência
+- foundation e setup de ambiente: 12 a 18 pontos = 6 a 9 dias-pessoa
+- domínio `ms-order`: 16 a 24 pontos = 8 a 12 dias-pessoa
+- domínio `ms-customer`: 8 a 14 pontos = 4 a 7 dias-pessoa
+- frontend e integração: 12 a 18 pontos = 6 a 9 dias-pessoa
+- mensageria e consistência: 10 a 16 pontos = 5 a 8 dias-pessoa
+- observabilidade e hardening: 8 a 12 pontos = 4 a 6 dias-pessoa
 
-# 7. Estratégia de Frontend
+Observações:
 
-Fluxo de trabalho:
+- as estimativas consideram complexidade técnica moderada e equipe familiarizada com Spring Boot, Angular, RabbitMQ e MySQL
+- a reestimativa deve acontecer ao final de cada sprint com base em throughput real
 
-* API contract first (OpenAPI)
-* mock API
-* desenvolvimento frontend
-* integração backend
-
-Ferramentas úteis:
-
-* geração de client via OpenAPI
-* mocks
-
-# 8. Estratégia de Releases
-
-Sugestão:
-
-ambientes
-
-* local
-* dev
-* staging
-* prod
-
-Deploy:
-
-GitHub Actions
-      ↓
-Build Docker
-      ↓
-Registry
-      ↓
-Deploy
-
-# 9. Roadmap de Desenvolvimento
-
-Exemplo de roadmap:
-
-Sprint 1
-
-* arquitetura
-* docker
-* CI/CD
-* setup backend
-* setup frontend
-
-Sprint 2
-
-* autenticação
-* primeiro CRUD
-* eventos iniciais
-
-Sprint 3
-
-* mensageria
-* integração entre serviços
-* testes de integração
-
-Sprint 4
-
-* observabilidade
-* métricas
-* hardening
-
-# 10. Checklist de Qualidade
+## 11. Definition of Done
 
 Antes de cada merge:
 
-✔ testes unitários
-✔ testes de integração
-✔ contrato OpenAPI válido
-✔ build docker
-✔ pipeline verde
+- testes unitários passando
+- testes de integração passando
+- contrato OpenAPI atualizado e válido
+- cobertura dentro do mínimo acordado
+- build Docker funcionando
+- pipeline CI verde
+- documentação impactada atualizada
+
+## 12. Riscos e Mitigações
+
+Riscos principais:
+
+- inconsistência entre mensagem consumida e modelo persistido
+- duplicidade de consumo gerando agregados incorretos
+- divergência entre contrato backend e consumo do frontend
+
+Mitigações:
+
+- versionamento de contratos de mensagem e validação de payload
+- idempotência no processamento por identificador do pedido
+- validação de contrato em CI e integração contínua frontend/backend

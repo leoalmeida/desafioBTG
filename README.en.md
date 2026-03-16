@@ -1,6 +1,53 @@
 # desafioBTG
 
-[Português](README.md) | [English](README.en.md)
+[Português](readme.md) | [English](README.en.md)
+
+Full stack platform for order processing and reporting, built with Angular, Spring Boot services, RabbitMQ, MySQL, and Docker Compose.
+
+## Executive Summary
+
+This repository implements the BTG challenge with focus on asynchronous order ingestion, persistent storage, and REST APIs for operational reports by customer and by order.
+
+Project goals:
+
+- consume orders sent to RabbitMQ
+- persist data and aggregates in MySQL
+- expose REST APIs for the requested reporting queries
+- integrate backend and frontend with continuous quality through tests and CI
+
+Main scope:
+
+- `frontend`: Angular UI for report queries
+- `ms-customer`: customer-related domain and queries
+- `ms-order`: order consumption, persistence, and reporting queries
+- `docs`: architecture, ADRs, and support material
+
+Architecture at a glance:
+
+Frontend
+	|
+REST APIs
+	|
+`ms-customer` + `ms-order`
+	|
+RabbitMQ + MySQL
+
+## Stack
+
+- Java 17
+- Spring Boot
+- Angular 21
+- MySQL 8
+- RabbitMQ
+- Docker Compose
+- GitHub Actions + Codecov
+
+## Project Status
+
+- backend organized around `ms-customer` and `ms-order`
+- Angular frontend versioned in the same repository
+- architecture documentation and ADRs available under `docs`
+- detailed roadmap available in [plano.md](plano.md)
 
 ## Build, Tests and Coverage
 
@@ -12,49 +59,38 @@
 
 Backend coverage reports are generated with JaCoCo and published as artifacts in test jobs.
 
-![Java](https://img.shields.io/badge/Java-17-007396?logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot&logoColor=white)
-![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
-![RabbitMQ](https://img.shields.io/badge/RabbitMQ-AMQP-FF6600?logo=rabbitmq&logoColor=white)
-
-Full stack platform based on microservices with Angular frontend, API Gateway, Service Discovery, ms-customer and ms-order.
-
 ## Table of Contents
 
-- [Overview](#overview)
+- [Executive Summary](#executive-summary)
+- [Stack](#stack)
+- [Project Status](#project-status)
 - [Build, Tests and Coverage](#build-tests-and-coverage)
-- [Ports and Discovery](#ports-and-discovery)
+- [Repository Modules](#repository-modules)
+- [Ports and Integrations](#ports-and-integrations)
 - [Requirements](#requirements)
-- [How to Run](#how-to-run)
+- [Quick Start](#quick-start)
 - [Configuration](#configuration)
 - [Tests](#tests)
 - [Docker](#docker)
 - [Troubleshooting](#troubleshooting)
+- [References](#references)
 
-## Overview
+## Repository Modules
 
-- Java 17
-- Spring Boot / Spring Cloud
-- Angular 21
-- MySQL 8
-- RabbitMQ
-- Maven multi-module
+Modules at the repository root:
 
-Modules in the root aggregator:
+- `frontend`
+- `ms-customer`
+- `ms-order`
+- `docs`
+- root `pom.xml` for aggregated backend build
 
-- frontend
-- api-gateway
-- service-discovery
-- ms-customer
-- ms-order
+## Ports and Integrations
 
-## Ports and Discovery
-
-- frontend: http://localhost:4200
-- api-gateway: http://localhost:8082
-- service-discovery: http://localhost:8761
-- ms-customer and ms-order: server.port=0 (dynamic ports, registered in Eureka)
+- frontend: usually `http://localhost:4200` when started with Angular CLI
+- `ms-customer` and `ms-order`: `server.port=0` when run locally outside Docker
+- MySQL: `3306` in the container, mapped through `MYSQL_LOCAL_PORT`
+- RabbitMQ: `5672` and management UI on `15672`
 
 ## Requirements
 
@@ -63,13 +99,21 @@ Modules in the root aggregator:
 - Node.js 20+ and npm
 - Docker (optional for full environment)
 
-## How to Run
+## Quick Start
+
+### Essential local startup
+
+1. run the backend build at the repository root
+2. install frontend dependencies
+3. start MySQL and RabbitMQ with Docker Compose or use an equivalent environment
+4. start `ms-customer` and `ms-order`
+5. start the frontend and validate the report queries
 
 ### 1. Backend build
 
 ```powershell
 Set-Location "c:\Users\leo_a\projetos\desafioBTG"
-.\mvnw.cmd clean install
+mvn clean install
 ```
 
 ### 2. Frontend
@@ -80,19 +124,25 @@ npm install
 npm start
 ```
 
-### 3. Start backend services (recommended order)
+### 3. Start backend services
 
-1. service-discovery
-2. api-gateway
-3. ms-customer
-4. ms-order
+1. ms-customer
+2. ms-order
 
 Example:
 
 ```powershell
-Set-Location "c:\Users\leo_a\projetos\desafioBTG\service-discovery"
-..\mvnw.cmd spring-boot:run
+Set-Location "c:\Users\leo_a\projetos\desafioBTG\ms-customer"
+mvn spring-boot:run
 ```
+
+Repeat for `ms-order` in another terminal.
+
+### Expected result
+
+- frontend available locally
+- backend services connected to MySQL and RabbitMQ
+- reporting queries accessible according to the project contracts
 
 ## Configuration
 
@@ -119,8 +169,6 @@ npm --prefix frontend run test:ci:threshold
 ```powershell
 mvn -B -f ms-order/pom.xml clean package
 mvn -B -f ms-customer/pom.xml clean package
-mvn -B -f api-gateway/pom.xml clean package
-mvn -B -f service-discovery/pom.xml clean package
 ```
 
 ## Docker
@@ -134,6 +182,13 @@ docker compose up --build
 
 ## Troubleshooting
 
-- Services do not show in Eureka: make sure service-discovery started first.
 - Database connection errors: validate MYSQL_* variables and SPRING_APPLICATION_JSON in compose.
-- Frontend cannot reach API: ensure gateway is up on 8082.
+- Order consumption issues: validate that RabbitMQ is up and queue settings are correct.
+- Frontend cannot reach the API: validate environment variables, proxy settings, and backend service availability.
+
+## References
+
+- roadmap and planning: [plano.md](plano.md)
+- event-driven architecture ADR: [docs/adr/ADR-001-event-driven-architecture.md](docs/adr/ADR-001-event-driven-architecture.md)
+- architecture diagrams: [docs/architecture](docs/architecture)
+- challenge statement: [problem.md](problem.md)
